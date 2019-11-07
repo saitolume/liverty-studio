@@ -1,88 +1,85 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect } from 'react'
+import { useFrame, useThree } from 'react-three-fiber'
+import { VRMSchema, VRMPose } from '@pixiv/three-vrm'
+import FaceFilter, { FaceFilterState } from 'facefilter'
 import * as THREE from 'three'
-import styled from 'styled-components'
-import { VRM, VRMSchema } from '@pixiv/three-vrm'
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
+import { useVrm } from '../hooks/useVrm'
+import pose from '../pose.json'
 
-const VrmModel: React.FC<{ url: string }> = ({ url }) => {
-  const ref = useRef<HTMLDivElement>(null)
-  const camera = useRef<THREE.PerspectiveCamera>()
-  const clock = useRef<THREE.Clock>(new THREE.Clock())
-  const loader = useRef(new GLTFLoader())
-  const renderer = useRef<THREE.WebGLRenderer>(new THREE.WebGLRenderer())
-  const scene = useRef<THREE.Scene>()
-  const light = useRef<THREE.DirectionalLight>()
-  const [vrm, setVrm] = useState<VRM>()
-  const [size, setSize] = useState<{ width: number; height: number }>({ width: 0, height: 0 })
-
-  const initRenderer = useCallback(() => {
-    if (!ref.current) return
-    const width = ref.current.clientWidth
-    const height = ref.current.clientHeight
-    renderer.current.setSize(width, height)
-    setSize({ width, height })
-
-    ref.current.appendChild(renderer.current.domElement)
-  }, [])
-
-  const initCamera = useCallback(() => {
-    camera.current = new THREE.PerspectiveCamera(30.0, size.width / size.height, 0.01, 20.0)
-    camera.current.position.set(0.0, 0.0, 5.0)
-  }, [size.height, size.width])
-
-  const loadVrm = () => {
-    loader.current.load(url, async gltf => {
-      if (!scene.current) return
-      const vrm = await VRM.from(gltf)
-      scene.current.add(vrm.scene)
-      vrm.scene.rotation.y = Math.PI
-
-      if (!vrm.lookAt || !vrm.lookAt.target) return
-      vrm.lookAt.target = camera.current
-
-      if (!vrm.humanoid) return
-      const head = vrm.humanoid.getBoneNode(VRMSchema.HumanoidBoneName.Head)
-      if (!head || !camera.current) return
-      camera.current.position.set(0.0, head.getWorldPosition(new THREE.Vector3()).y, 2.0)
-      setVrm(vrm)
-    })
-  }
-
-  const update = () => {
-    requestAnimationFrame(update)
-    if (!clock.current) return
-    const delta = clock.current.getDelta()
-
-    if (vrm) {
-      vrm.scene.rotation.y = Math.PI * Math.sin(clock.current.getElapsedTime())
-      vrm.update(delta)
-    }
-
-    if (!scene.current || !camera.current) return
-    renderer.current.render(scene.current, camera.current)
-  }
-
-  useEffect(() => {
-    initRenderer()
-    initCamera()
-    scene.current = new THREE.Scene()
-    light.current = new THREE.DirectionalLight(0xffffff)
-    light.current.position.set(1.0, 1.0, 1.0).normalize()
-    scene.current.add(light.current)
-    clock.current.start()
-    loadVrm()
-    update()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  return <Wrapper ref={ref}></Wrapper>
+type Props = {
+  url: string
+  renderTo2dCanvas: () => void
 }
 
-const Wrapper = styled.div`
-  background-color: #000;
-  border-left: 1px solid #fff;
-  width: calc(100% - 1px);
-  height: 100%;
-`
+const VRMModel: React.FC<Props> = ({ url, renderTo2dCanvas }) => {
+  const vrm = useVrm(url)
+  const { aspect, camera, setDefaultCamera } = useThree()
+  const jeelizCanvas = document.createElement('canvas')
 
-export default VrmModel
+  const handleJeelizReady = (error: unknown) => {
+    if (error) {
+      console.error(error)
+      return
+    }
+  }
+
+  const handleJeelizTrack = useCallback(
+    (state: FaceFilterState) => {
+      if (!vrm || !vrm.humanoid) return
+
+      const head = vrm.humanoid.getBoneNode(VRMSchema.HumanoidBoneName.Head)
+      if (head) {
+        head.rotation.set(-state.rx, -state.ry, state.rz, 'ZXY')
+      }
+
+      if (vrm.blendShapeProxy) {
+        const [mouth] = state.expressions
+        vrm.blendShapeProxy.setValue(VRMSchema.BlendShapePresetName.A, mouth)
+      }
+    },
+    [vrm]
+  )
+
+  const initializeFaceFilter = useCallback(() => {
+    FaceFilter.init({
+      canvas: jeelizCanvas,
+      NNCpath: 'https://unpkg.com/facefilter@1.1.1/dist/NNC.json',
+      followZRot: true,
+      maxFacedDetected: 1,
+      callbackReady: handleJeelizReady,
+      callbackTrack: handleJeelizTrack
+    })
+  }, [handleJeelizTrack, jeelizCanvas])
+
+  // Set camera
+  useEffect(() => {
+    const camera = new THREE.PerspectiveCamera(30.0, aspect, 0.01, 20.0)
+    camera.position.set(0.0, 1.25, 1.5)
+    setDefaultCamera(camera)
+  }, [aspect, setDefaultCamera])
+
+  // Initializer
+  useEffect(() => {
+    if (!vrm || !vrm.humanoid) return
+    vrm.humanoid.setPose((pose as unknown) as VRMPose)
+    if (vrm.lookAt) {
+      vrm.lookAt.target = camera
+    }
+    initializeFaceFilter()
+  }, [camera, initializeFaceFilter, vrm])
+
+  useFrame(({ camera, clock, gl, scene }, delta) => {
+    if (!vrm) return
+    vrm.update(delta)
+    const blink = Math.max(0.0, 1.0 - 10.0 * Math.abs((clock.getElapsedTime() % 4.0) - 2.0))
+    if (vrm.blendShapeProxy) {
+      vrm.blendShapeProxy.setValue(VRMSchema.BlendShapePresetName.Blink, blink)
+    }
+    gl.render(scene, camera)
+    renderTo2dCanvas()
+  })
+
+  return vrm ? <primitive object={vrm.scene} /> : null
+}
+
+export default VRMModel

@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import uuid from 'uuid/v4'
 import { RootState } from '../domains'
@@ -19,6 +19,7 @@ const getFilename = (filepath: string) => {
 export const useSources = () => {
   const dispatch = useDispatch()
   const { sources } = useSelector<RootState, SourceState>(({ source }) => source)
+  const [currentSource, setCurrentSource] = useState<Source | null>(null)
 
   const addImage = useCallback(
     ({ filepath, width, height }: Pick<Source, 'filepath' | 'width' | 'height'>) => {
@@ -30,8 +31,8 @@ export const useSources = () => {
         filepath,
         width,
         height,
-        x: 0,
-        y: 0
+        x: 4,
+        y: 4
       }
       dispatch(addSource(image))
     },
@@ -69,5 +70,5 @@ export const useSources = () => {
     [dispatch]
   )
 
-  return { sources, addImage, addText, removeSource, updateSource }
+  return { currentSource, sources, addImage, addText, removeSource, setCurrentSource, updateSource }
 }

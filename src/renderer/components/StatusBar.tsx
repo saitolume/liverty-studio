@@ -13,7 +13,7 @@ const Wrapper = styled.div`
   display: flex;
   justify-content: flex-end;
   line-height: 32px;
-  width: 100vw;
+  width: 100%;
   height: 32px;
 `
 

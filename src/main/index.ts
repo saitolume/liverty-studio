@@ -9,7 +9,7 @@ let mainWindow: Electron.BrowserWindow | null = null
 
 const inatallExtentions = () => {
   const extensions = ['REACT_DEVELOPER_TOOLS', 'REDUX_DEVTOOLS'] as const
-  return Promise.all(extensions.map(name => loadDevtool(loadDevtool[name], { enabled: true })))
+  return Promise.all(extensions.map(name => loadDevtool(loadDevtool[name])))
 }
 
 const createWindow = () => {
