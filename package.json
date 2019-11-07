@@ -4,13 +4,13 @@
   "author": "saitoeku3 <saitoeku3@gmail.com>",
   "private": true,
   "scripts": {
-    "build": "rimraf ./dist && yarn build:main && yarn build:renderer",
+    "build": "rimraf ./dist && npm run build:main && npm run build:renderer",
     "build:main": "rimraf ./dist/main.js && webpack --config ./webpack/webpack.config.main.ts",
     "build:renderer": "webpack --config ./webpack/webpack.config.renderer.ts",
-    "dev": "concurrently \"yarn dev:renderer\" \"yarn dev:main\"",
-    "dev:main": "yarn build:main && electron ./dist/main.js",
+    "dev": "concurrently \"npm run dev:renderer\" \"npm run dev:main\"",
+    "dev:main": "npm run build:main && electron ./dist/main.js",
     "dev:renderer": "webpack-dev-server --port 3000 --config ./webpack/webpack.config.renderer.ts",
-    "format": "yarn lint --fix",
+    "format": "npm run lint --fix",
     "lint": "eslint \"**/*.{ts,tsx}\""
   },
   "dependencies": {
