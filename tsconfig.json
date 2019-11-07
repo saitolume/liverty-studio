@@ -9,6 +9,7 @@
     "moduleResolution": "node",
     "outDir": "dist",
     "paths": { "*": ["src/types/*"] },
+    "resolveJsonModule": true,
     "strict": true
   },
   "exclude": ["node_modules"],
