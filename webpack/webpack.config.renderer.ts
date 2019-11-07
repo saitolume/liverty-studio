@@ -30,12 +30,6 @@ const rendererConfig: webpack.Configuration = {
     })
   ],
 
-  resolve: {
-    alias: {
-      'react-dom': '@hot-loader/react-dom'
-    }
-  },
-
   target: 'electron-renderer'
 }
 

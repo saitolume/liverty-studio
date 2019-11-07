@@ -11,7 +11,7 @@ type Props = {
   renderTo2dCanvas: () => void
 }
 
-const VRMModel: React.FC<Props> = ({ url, renderTo2dCanvas }) => {
+const VrmModel: React.FC<Props> = ({ url, renderTo2dCanvas }) => {
   const vrm = useVrm(url)
   const { aspect, camera, setDefaultCamera } = useThree()
   const jeelizCanvas = document.createElement('canvas')
@@ -82,4 +82,4 @@ const VRMModel: React.FC<Props> = ({ url, renderTo2dCanvas }) => {
   return vrm ? <primitive object={vrm.scene} /> : null
 }
 
-export default VRMModel
+export default VrmModel
