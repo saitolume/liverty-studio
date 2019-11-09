@@ -13,7 +13,7 @@ type Props = {
 }
 
 const SourceImage: React.FC<Props> = ({ isSelected, source, updateSource }) => {
-  const imageRef = useRef<Image>(null)
+  const ref = useRef<Image>(null)
   const [image] = useImage(`file://${source.filepath}`)
 
   const onDragEnd = (event: KonvaEventObject<DragEvent>) => {
@@ -33,9 +33,9 @@ const SourceImage: React.FC<Props> = ({ isSelected, source, updateSource }) => {
   }
 
   return (
-    <SourceBoundingBox sourceRef={imageRef} isSelected={isSelected}>
+    <SourceBoundingBox sourceRef={ref} isSelected={isSelected}>
       <ImageComponent
-        ref={imageRef}
+        ref={ref}
         image={image}
         x={source.x}
         y={source.y}
