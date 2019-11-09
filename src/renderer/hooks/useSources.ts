@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import uuid from 'uuid/v4'
 import { RootState } from '../domains'
@@ -21,6 +21,8 @@ export const useSources = () => {
   const { sources } = useSelector<RootState, SourceState>(({ source }) => source)
   const [currentSource, setCurrentSource] = useState<Source | null>(null)
 
+  const images = useMemo(() => sources.filter(source => source.type === 'image'), [sources])
+
   const addImage = useCallback(
     ({ filepath, width, height }: Pick<Source, 'filepath' | 'width' | 'height'>) => {
       if (!filepath) return
@@ -39,23 +41,6 @@ export const useSources = () => {
     [dispatch]
   )
 
-  const addText = useCallback(
-    ({ content = '', name }: Pick<Source, 'content' | 'name'>) => {
-      const text: Source = {
-        id: uuid(),
-        type: 'text',
-        name,
-        content,
-        width: 0,
-        height: 0,
-        x: 0,
-        y: 0
-      }
-      dispatch(addSource(text))
-    },
-    [dispatch]
-  )
-
   const removeSource = useCallback(
     (itemId: Source['id']) => {
       dispatch(_removeSource(itemId))
@@ -70,5 +55,13 @@ export const useSources = () => {
     [dispatch]
   )
 
-  return { currentSource, sources, addImage, addText, removeSource, setCurrentSource, updateSource }
+  return {
+    addImage,
+    currentSource,
+    images,
+    removeSource,
+    setCurrentSource,
+    sources,
+    updateSource
+  }
 }

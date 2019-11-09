@@ -1,34 +1,36 @@
 import React, { useRef } from 'react'
 import { render } from 'react-dom'
-import { Canvas } from 'react-three-fiber'
-import { Stage as StageComponent, Layer } from 'react-konva'
+import { useStrictMode, Stage as StageComponent, Layer } from 'react-konva'
 import { Provider } from 'react-redux'
+import { Canvas } from 'react-three-fiber'
 import { Stage } from 'konva/types/Stage'
 import styled from 'styled-components'
-import BoundingBoxImage from './components/BoundingBoxImage'
 import MenuBase from './components/MenuBase'
 import MenuSources from './components/MenuSouces'
+import SourceImage from './components/SourceImage'
 import StatusBar from './components/StatusBar'
 import VrmModel from './components/VrmModel'
 import { useSources } from './hooks/useSources'
 import { store } from './store'
 
 const App: React.FC = () => {
-  const { sources, updateSource } = useSources()
+  const { images, sources, updateSource } = useSources()
   const stageRef = useRef<Stage>(null)
-  const ref = useRef<HTMLDivElement>(null)
-  const images = sources.filter(item => item.type === 'image')
+  const vrmRef = useRef<HTMLDivElement>(null)
+
+  useStrictMode(true)
 
   const renderVrm = () => {
-    if (!stageRef.current) return
-    const canvas = stageRef.current.content.querySelector('canvas')
-    if (!canvas) return
-    const context = canvas.getContext('2d')
-    if (!context || !ref.current) return
-    context.clearRect(0, 0, canvas.width, canvas.height)
-    const vrmCanvas = ref.current.querySelector('canvas')
-    if (!vrmCanvas) return
-    context.drawImage(vrmCanvas, 0, 0, vrmCanvas.width, vrmCanvas.height)
+    const stageCanvas = stageRef.current?.content.querySelector('canvas')
+    const vrmCanvas = vrmRef.current?.querySelector('canvas')
+
+    if (!stageCanvas || !vrmCanvas) return
+    const context = stageCanvas.getContext('2d')
+
+    if (!context) return
+    const { width, height } = vrmCanvas
+    context.clearRect(innerWidth - width, (innerHeight * 0.6) / 2, width, height)
+    context.drawImage(vrmCanvas, innerWidth - width, (innerHeight * 0.6) / 2, width, height)
   }
 
   return (
@@ -36,11 +38,11 @@ const App: React.FC = () => {
       <Main>
         <StageComponent
           ref={(stageRef as unknown) as React.RefObject<StageComponent>}
-          width={innerWidth - 300}
+          width={innerWidth}
           height={innerHeight * 0.6}>
-          <Layer width={innerWidth - 300} height={innerHeight * 0.6}>
+          <Layer width={innerWidth} height={innerHeight * 0.6}>
             {images.map(image => (
-              <BoundingBoxImage
+              <SourceImage
                 key={image.id}
                 source={image}
                 updateSource={updateSource}
@@ -49,7 +51,7 @@ const App: React.FC = () => {
             ))}
           </Layer>
         </StageComponent>
-        <div ref={ref} style={{ width: '300px', visibility: 'hidden' }}>
+        <VrmCanvas ref={vrmRef}>
           <Canvas>
             <ambientLight intensity={0.5} />
             <spotLight
@@ -64,7 +66,7 @@ const App: React.FC = () => {
               renderTo2dCanvas={renderVrm}
             />
           </Canvas>
-        </div>
+        </VrmCanvas>
       </Main>
       <Menus>
         <MenuSources sources={sources} />
@@ -77,7 +79,13 @@ const App: React.FC = () => {
 }
 
 const Wrapper = styled.div`
+  overflow: hidden;
   width: 100vw;
+`
+
+const VrmCanvas = styled.div`
+  width: 200px;
+  visibility: hidden;
 `
 
 const Main = styled.div`

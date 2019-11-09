@@ -14,7 +14,7 @@ type Props = {
 const VrmModel: React.FC<Props> = ({ url, renderTo2dCanvas }) => {
   const vrm = useVrm(url)
   const { aspect, camera, setDefaultCamera } = useThree()
-  const jeelizCanvas = document.createElement('canvas')
+  const facefilterCanvas = document.createElement('canvas')
 
   const handleJeelizReady = (error: unknown) => {
     if (error) {
@@ -25,56 +25,54 @@ const VrmModel: React.FC<Props> = ({ url, renderTo2dCanvas }) => {
 
   const handleJeelizTrack = useCallback(
     (state: FaceFilterState) => {
-      if (!vrm || !vrm.humanoid) return
+      if (!vrm) return
 
-      const head = vrm.humanoid.getBoneNode(VRMSchema.HumanoidBoneName.Head)
-      if (head) {
-        head.rotation.set(-state.rx, -state.ry, state.rz, 'ZXY')
-      }
+      const head = vrm.humanoid?.getBoneNode(VRMSchema.HumanoidBoneName.Head)
+      head?.rotation.set(-state.rx, -state.ry, state.rz, 'ZXY')
 
-      if (vrm.blendShapeProxy) {
-        const [mouth] = state.expressions
-        vrm.blendShapeProxy.setValue(VRMSchema.BlendShapePresetName.A, mouth)
-      }
+      const [mouth] = state.expressions
+      vrm.blendShapeProxy?.setValue(VRMSchema.BlendShapePresetName.A, mouth)
     },
     [vrm]
   )
 
   const initializeFaceFilter = useCallback(() => {
     FaceFilter.init({
-      canvas: jeelizCanvas,
+      canvas: facefilterCanvas,
       NNCpath: 'https://unpkg.com/facefilter@1.1.1/dist/NNC.json',
       followZRot: true,
       maxFacedDetected: 1,
       callbackReady: handleJeelizReady,
       callbackTrack: handleJeelizTrack
     })
-  }, [handleJeelizTrack, jeelizCanvas])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [handleJeelizTrack])
 
   // Set camera
   useEffect(() => {
     const camera = new THREE.PerspectiveCamera(30.0, aspect, 0.01, 20.0)
-    camera.position.set(0.0, 1.25, 1.5)
+    camera.position.set(0.0, 1, 2.0)
     setDefaultCamera(camera)
   }, [aspect, setDefaultCamera])
 
   // Initializer
   useEffect(() => {
-    if (!vrm || !vrm.humanoid) return
-    vrm.humanoid.setPose((pose as unknown) as VRMPose)
+    if (!vrm) return
+    vrm.humanoid?.setPose((pose as unknown) as VRMPose)
     if (vrm.lookAt) {
       vrm.lookAt.target = camera
     }
     initializeFaceFilter()
-  }, [camera, initializeFaceFilter, vrm])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initializeFaceFilter, vrm])
 
   useFrame(({ camera, clock, gl, scene }, delta) => {
     if (!vrm) return
     vrm.update(delta)
+
     const blink = Math.max(0.0, 1.0 - 10.0 * Math.abs((clock.getElapsedTime() % 4.0) - 2.0))
-    if (vrm.blendShapeProxy) {
-      vrm.blendShapeProxy.setValue(VRMSchema.BlendShapePresetName.Blink, blink)
-    }
+    vrm.blendShapeProxy?.setValue(VRMSchema.BlendShapePresetName.Blink, blink)
+
     gl.render(scene, camera)
     renderTo2dCanvas()
   })
