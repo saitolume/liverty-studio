@@ -1,7 +1,7 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useCallback } from 'react'
 import { Layer, Stage } from 'react-konva'
 import { remote } from 'electron'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import Modal from './Modal'
 import SourceImage from './SourceImage'
 import SourceText from './SourceText'
@@ -18,8 +18,8 @@ const SourceAddModal: React.FC<Props> = ({ close, type }) => {
   const { dialog } = remote
   const { addSourceImage } = useSource()
   const [name, setName] = useState('')
-  const [filepath, setFilepath] = useState('')
   const [sourcePreview, setSourcePreview] = useState<Source | null>(null)
+  const isSubmitDisabled = !sourcePreview || !name
 
   const previewWidth = 400
   const previewHeight = (400 / 16) * 9
@@ -32,19 +32,21 @@ const SourceAddModal: React.FC<Props> = ({ close, type }) => {
     const { width, height } = await getImageSize(filepath)
     const sourceImage = createSourceImage({ filepath, width, height })
     if (!name) setName(sourceImage.name)
-    setFilepath(filepath)
     setSourcePreview(sourceImage)
   }
 
-  const onSubmit = async (event?: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event && event.keyCode !== 13) return
-    switch (sourcePreview?.type) {
-      case 'image':
-        addSourceImage({ ...sourcePreview, name })
-        break
-    }
-    close()
-  }
+  const submit = useCallback(
+    async (event?: React.KeyboardEvent<HTMLInputElement>) => {
+      if (event && event.keyCode !== 13) return
+      switch (sourcePreview?.type) {
+        case 'image':
+          addSourceImage({ ...sourcePreview, name })
+          break
+      }
+      close()
+    },
+    [addSourceImage, close, name, sourcePreview, type]
+  )
 
   const SourcePreview = useMemo(() => {
     switch (type) {
@@ -71,17 +73,17 @@ const SourceAddModal: React.FC<Props> = ({ close, type }) => {
             {type === 'image' && (
               <>
                 <Label htmlFor="image-file">Image File</Label>
-                <div style={{ display: 'flex' }}>
+                <FlexBox>
                   <Input
                     id="image-file"
                     type="text"
                     name="image"
-                    value={filepath}
+                    value={sourcePreview?.type === 'image' ? sourcePreview?.filepath : ''}
                     placeholder="Image File"
                     disabled
                   />
                   <BrowseButton onClick={setPreview}>Browse</BrowseButton>
-                </div>
+                </FlexBox>
               </>
             )}
             <Label htmlFor="name">Name</Label>
@@ -91,13 +93,15 @@ const SourceAddModal: React.FC<Props> = ({ close, type }) => {
               value={name}
               placeholder="Name"
               onChange={event => setName(event.target.value)}
-              onKeyDown={onSubmit}
+              onKeyDown={submit}
             />
           </SourceForm>
-          <div style={{ display: 'flex', flexDirection: 'row-reverse' }}>
-            <SubmitButton onClick={() => onSubmit()}>Add</SubmitButton>
+          <ActionButtonList>
+            <SubmitButton onClick={() => submit()} disabled={isSubmitDisabled}>
+              Add
+            </SubmitButton>
             <CancelButton onClick={() => close()}>Cancel</CancelButton>
-          </div>
+          </ActionButtonList>
         </ModalBody>
       </Container>
     </Modal>
@@ -134,6 +138,10 @@ const SourceForm = styled.div`
   width: 100%;
 `
 
+const FlexBox = styled.div`
+  display: flex;
+`
+
 const Label = styled.label`
   color: ${({ theme }) => theme.white};
   display: block;
@@ -166,9 +174,11 @@ const Button = styled.button`
   border-radius: 4px;
   color: ${({ theme }) => theme.white};
   cursor: pointer;
+  height: 32px;
+  min-width: 56px;
   margin-bottom: 24px;
   outline: 0;
-  transition: background-color 0.15s;
+  transition: background-color 0.15s, filter 0.15s;
   &:hover {
     filter: brightness(1.1);
   }
@@ -178,14 +188,32 @@ const Button = styled.button`
 `
 
 const BrowseButton = styled(Button)`
+  height: 44px;
   margin-left: 8px;
 `
 
-const CancelButton = styled(Button)``
+const ActionButtonList = styled.div`
+  display: flex;
+  flex-direction: row-reverse;
+`
 
-const SubmitButton = styled(Button)`
+const CancelButton = styled(Button)`
+  margin-right: 8px;
+`
+
+const SubmitButton = styled(Button)<{ disabled: boolean }>`
   background-color: ${({ theme }) => theme.primary};
   border: 1px solid ${({ theme }) => theme.primary};
+  ${({ disabled }) =>
+    disabled &&
+    css`
+      background-color: ${({ theme }) => theme.primaryDark};
+      border: 1px solid ${({ theme }) => theme.primaryDark};
+      cursor: not-allowed;
+      &:hover {
+        filter: none;
+      }
+    `}
 `
 
 export default SourceAddModal
