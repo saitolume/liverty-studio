@@ -9,12 +9,14 @@ const getFilename = (filepath: string) => {
 
 export const createSourceImage = ({
   filepath,
+  name,
   x = 0,
   y = 0,
   width,
   height
 }: {
   filepath: string
+  name?: string
   x?: number
   y?: number
   width: number
@@ -23,7 +25,7 @@ export const createSourceImage = ({
   const image: Source = {
     id: uuid(),
     type: 'image',
-    name: getFilename(filepath),
+    name: name || getFilename(filepath),
     filepath,
     width,
     height,

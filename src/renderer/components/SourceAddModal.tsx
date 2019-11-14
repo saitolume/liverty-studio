@@ -31,6 +31,7 @@ const SourceAddModal: React.FC<Props> = ({ close, type }) => {
     const [filepath] = filePaths
     const { width, height } = await getImageSize(filepath)
     const sourceImage = createSourceImage({ filepath, width, height })
+    if (!name) setName(sourceImage.name)
     setFilepath(filepath)
     setSourcePreview(sourceImage)
   }
@@ -39,7 +40,7 @@ const SourceAddModal: React.FC<Props> = ({ close, type }) => {
     if (event && event.keyCode !== 13) return
     switch (sourcePreview?.type) {
       case 'image':
-        addSourceImage(sourcePreview)
+        addSourceImage({ ...sourcePreview, name })
         break
     }
     close()

@@ -18,8 +18,18 @@ export const useSource = () => {
   const images = useMemo(() => sources.filter(source => source.type === 'image'), [sources])
 
   const addSourceImage = useCallback(
-    ({ filepath, width, height }: { filepath: string; width: number; height: number }) => {
-      const sourceImage = createSourceImage({ filepath, x: 4, y: 4, width, height })
+    ({
+      filepath,
+      name,
+      width,
+      height
+    }: {
+      filepath: string
+      name?: string
+      width: number
+      height: number
+    }) => {
+      const sourceImage = createSourceImage({ filepath, name, x: 4, y: 4, width, height })
       dispatch(addSource(sourceImage))
     },
     [dispatch]
