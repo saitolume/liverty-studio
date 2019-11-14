@@ -1,11 +1,8 @@
 import { app, ipcMain, BrowserWindow } from 'electron'
 import loadDevtool from 'electron-load-devtool'
-import { promisify } from 'util'
+import { sizeOf } from './utils/sizeOf'
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const sizeOf = promisify(require('image-size'))
-
-let mainWindow: Electron.BrowserWindow | null = null
+let mainWindow: BrowserWindow | null = null
 
 const inatallExtentions = () => {
   const extensions = ['REACT_DEVELOPER_TOOLS', 'REDUX_DEVTOOLS'] as const
@@ -16,7 +13,8 @@ const createWindow = () => {
   const mainWindow = new BrowserWindow({
     width: 1024,
     height: 728,
-    backgroundColor: '#252525',
+    backgroundColor: '#1a1d21',
+    titleBarStyle: 'hidden',
     webPreferences: {
       nodeIntegration: true,
       webSecurity: false
@@ -36,12 +34,12 @@ ipcMain.on('req-image-size', async (event, imagePath) => {
 })
 
 app.on('ready', async () => {
+  mainWindow = createWindow()
   try {
     await inatallExtentions()
   } catch (err) {
     console.error(err)
   }
-  mainWindow = createWindow()
 })
 
 app.on('window-all-closed', () => {
