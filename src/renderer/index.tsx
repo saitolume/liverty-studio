@@ -1,24 +1,26 @@
 import React, { useRef } from 'react'
 import { render } from 'react-dom'
-import { useStrictMode, Stage as StageComponent, Layer } from 'react-konva'
+import { Stage, Layer } from 'react-konva'
+import { hot } from 'react-hot-loader/root'
 import { Provider } from 'react-redux'
 import { Canvas } from 'react-three-fiber'
-import { Stage } from 'konva/types/Stage'
-import styled from 'styled-components'
+import Konva from 'konva'
+import styled, { ThemeProvider } from 'styled-components'
 import MenuBase from './components/MenuBase'
 import MenuSources from './components/MenuSouces'
 import SourceImage from './components/SourceImage'
-import StatusBar from './components/StatusBar'
 import VrmModel from './components/VrmModel'
-import { useSources } from './hooks/useSources'
+import { useSource } from './hooks/useSource'
 import { store } from './store'
+import { theme } from './theme'
 
-const App: React.FC = () => {
-  const { images, sources, updateSource } = useSources()
-  const stageRef = useRef<Stage>(null)
+const App: React.FC = hot(() => {
+  const { images, sources, updateSource } = useSource()
+  const stageRef = useRef<Konva.Stage>(null)
   const vrmRef = useRef<HTMLDivElement>(null)
 
-  useStrictMode(true)
+  const stageHeight = innerHeight * 0.6
+  const stageWidth = (stageHeight / 9) * 16
 
   const renderVrm = () => {
     const stageCanvas = stageRef.current?.content.querySelector('canvas')
@@ -29,28 +31,39 @@ const App: React.FC = () => {
 
     if (!context) return
     const { width, height } = vrmCanvas
-    context.clearRect(innerWidth - width, (innerHeight * 0.6) / 2, width, height)
-    context.drawImage(vrmCanvas, innerWidth - width, (innerHeight * 0.6) / 2, width, height)
+    context.clearRect(stageWidth - width, stageHeight - height, width, height)
+    context.drawImage(vrmCanvas, stageWidth - width, stageHeight - height, width, height)
   }
 
   return (
-    <Wrapper>
-      <Main>
-        <StageComponent
-          ref={(stageRef as unknown) as React.RefObject<StageComponent>}
-          width={innerWidth}
-          height={innerHeight * 0.6}>
-          <Layer width={innerWidth} height={innerHeight * 0.6}>
-            {images.map(image => (
-              <SourceImage
-                key={image.id}
-                source={image}
-                updateSource={updateSource}
-                isSelected={true}
-              />
-            ))}
-          </Layer>
-        </StageComponent>
+    <>
+      <Wrapper>
+        <TitleBar />
+        <Main>
+          <div style={{ margin: '0 auto', backgroundColor: '#000' }}>
+            <Stage
+              ref={(stageRef as unknown) as React.RefObject<Stage>}
+              width={stageWidth}
+              height={stageHeight}>
+              <Layer>
+                {images.map(image => (
+                  <SourceImage
+                    key={image.id}
+                    source={image}
+                    updateSource={updateSource}
+                    isSelected={true}
+                    draggable
+                  />
+                ))}
+              </Layer>
+            </Stage>
+          </div>
+        </Main>
+        <Menus>
+          <MenuSources sources={sources} />
+          <MenuBase title="Mixers"></MenuBase>
+          <MenuBase title="Controls"></MenuBase>
+        </Menus>
         <VrmCanvas ref={vrmRef}>
           <Canvas>
             <ambientLight intensity={0.5} />
@@ -67,29 +80,36 @@ const App: React.FC = () => {
             />
           </Canvas>
         </VrmCanvas>
-      </Main>
-      <Menus>
-        <MenuSources sources={sources} />
-        <MenuBase title="Mixers"></MenuBase>
-        <MenuBase title="Controls"></MenuBase>
-      </Menus>
-      <StatusBar />
-    </Wrapper>
+      </Wrapper>
+    </>
   )
-}
+})
 
 const Wrapper = styled.div`
   overflow: hidden;
   width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+`
+
+const TitleBar = styled.div`
+  background-color: ${({ theme }) => theme.grayLight};
+  width: 100%;
+  height: 24px;
+  -webkit-app-region: drag;
 `
 
 const VrmCanvas = styled.div`
   width: 200px;
+  height: ${innerHeight * 0.6 * 0.6}px;
   visibility: hidden;
+  position: absolute;
+  z-index: -1;
 `
 
 const Main = styled.div`
-  background-color: #000;
+  background-color: ${({ theme }) => theme.grayDark};
   display: flex;
   width: 100%;
   height: 60vh;
@@ -98,12 +118,15 @@ const Main = styled.div`
 const Menus = styled.div`
   display: flex;
   width: 100%;
-  height: calc(40vh - 32px);
+  height: 40vh;
+  margin-top: auto;
 `
 
 render(
   <Provider store={store}>
-    <App />
+    <ThemeProvider theme={theme}>
+      <App />
+    </ThemeProvider>
   </Provider>,
   document.querySelector('#root')
 )

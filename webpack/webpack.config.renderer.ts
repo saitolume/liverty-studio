@@ -30,7 +30,13 @@ const rendererConfig: webpack.Configuration = {
     })
   ],
 
-  target: 'electron-renderer'
+  target: 'electron-renderer',
+
+  resolve: {
+    alias: {
+      'react-dom': '@hot-loader/react-dom'
+    }
+  }
 }
 
 export default merge.smart(baseConfig, rendererConfig)

@@ -1,4 +1,5 @@
 import { ipcRenderer } from 'electron'
+import { REQ_IMAGE_SIZE, RES_IMAGE_SIZE } from './../../constants/channels'
 
 type Size = {
   width: number
@@ -7,8 +8,8 @@ type Size = {
 
 export const getImageSize = (imagePath: string) =>
   new Promise<Size>(resolve => {
-    ipcRenderer.send('req-image-size', imagePath)
-    ipcRenderer.on('res-image-size', (_: unknown, size: Size) => {
+    ipcRenderer.send(REQ_IMAGE_SIZE, imagePath)
+    ipcRenderer.on(RES_IMAGE_SIZE, (_: unknown, size: Size) => {
       resolve(size)
     })
   })

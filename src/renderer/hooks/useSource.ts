@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import uuid from 'uuid/v4'
 import { RootState } from '../domains'
@@ -6,37 +6,48 @@ import {
   Source,
   SourceState,
   addSource,
+  createSourceImage,
   removeSource as _removeSource,
   updateSource as _updateSouce
 } from '../domains/source'
 
-const getFilename = (filepath: string) => {
-  const result = filepath.match(/[^/]+$/)
-  if (!result) return filepath
-  return result[0]
-}
-
-export const useSources = () => {
+export const useSource = () => {
   const dispatch = useDispatch()
   const { sources } = useSelector<RootState, SourceState>(({ source }) => source)
-  const [currentSource, setCurrentSource] = useState<Source | null>(null)
 
   const images = useMemo(() => sources.filter(source => source.type === 'image'), [sources])
 
-  const addImage = useCallback(
-    ({ filepath, width, height }: Pick<Source, 'filepath' | 'width' | 'height'>) => {
-      if (!filepath) return
-      const image: Source = {
+  const addSourceImage = useCallback(
+    ({
+      filepath,
+      name,
+      width,
+      height
+    }: {
+      filepath: string
+      name?: string
+      width: number
+      height: number
+    }) => {
+      const sourceImage = createSourceImage({ filepath, name, x: 4, y: 4, width, height })
+      dispatch(addSource(sourceImage))
+    },
+    [dispatch]
+  )
+
+  const addSourceText = useCallback(
+    ({ content, width, height }: { content: string; width: number; height: number }) => {
+      const text: Source = {
         id: uuid(),
-        type: 'image',
-        name: getFilename(filepath),
-        filepath,
+        type: 'text',
+        name: content,
+        content,
         width,
         height,
         x: 4,
         y: 4
       }
-      dispatch(addSource(image))
+      dispatch(addSource(text))
     },
     [dispatch]
   )
@@ -56,11 +67,10 @@ export const useSources = () => {
   )
 
   return {
-    addImage,
-    currentSource,
+    addSourceImage,
+    addSourceText,
     images,
     removeSource,
-    setCurrentSource,
     sources,
     updateSource
   }

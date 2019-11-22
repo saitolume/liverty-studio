@@ -15,13 +15,13 @@ const MenuBase: React.FC<Props> = ({ children, title }) => {
 }
 
 const Wrapper = styled.div`
-  border: 1px solid #333;
+  border: 1px solid ${({ theme }) => theme.grayLight};
   width: 100%;
   height: 100%;
 `
 
 const MenuTitle = styled.div`
-  background-color: #333;
+  background-color: ${({ theme }) => theme.grayLight};
   line-height: 20px;
   text-align: center;
   width: 100%;
@@ -29,7 +29,7 @@ const MenuTitle = styled.div`
 `
 
 const MenuBox = styled.div`
-  background-color: #212121;
+  background-color: ${({ theme }) => theme.grayDark};
   display: flex;
   flex-direction: column;
   width: 100%;

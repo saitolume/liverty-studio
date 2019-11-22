@@ -1,11 +1,12 @@
 import React, { useEffect, useRef } from 'react'
 import { Transformer as TransformerComponent } from 'react-konva'
 import { Image } from 'konva/types/shapes/Image'
+import { Text } from 'konva/types/shapes/Text'
 import { Transformer } from 'konva/types/shapes/Transformer'
 
 type Props = {
   isSelected: boolean
-  sourceRef: React.RefObject<Image>
+  sourceRef: React.RefObject<Image | Text>
 }
 
 const SourceBoundingBox: React.FC<Props> = ({ children, isSelected, sourceRef }) => {

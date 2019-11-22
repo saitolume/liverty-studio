@@ -1,7 +1,6 @@
 import React, { useRef } from 'react'
-import { Image as ImageComponent } from 'react-konva'
-import useImage from 'use-image'
-import { Image } from 'konva/types/shapes/Image'
+import { Text as TextCompopnent } from 'react-konva'
+import { Text } from 'konva/types/shapes/Text'
 import { KonvaEventObject } from 'konva/types/Node'
 import SourceBoundingBox from './SourceBoundingBox'
 import { Source } from '../domains/source'
@@ -13,14 +12,13 @@ type Props = {
   updateSource?: (source: Source) => void
 }
 
-const SourceImage: React.FC<Props> = ({
+const SourceText: React.FC<Props> = ({
   draggable = false,
   isSelected = false,
   source,
   updateSource = () => {}
 }) => {
-  const ref = useRef<Image>(null)
-  const [image] = useImage(source.type === 'image' ? `file://${source.filepath}` : '')
+  const ref = useRef<Text>(null)
 
   const onDragEnd = (event: KonvaEventObject<DragEvent>) => {
     const { x, y } = event.currentTarget.getClientRect()
@@ -40,9 +38,8 @@ const SourceImage: React.FC<Props> = ({
 
   return (
     <SourceBoundingBox sourceRef={ref} isSelected={isSelected}>
-      <ImageComponent
+      <TextCompopnent
         ref={ref}
-        image={image}
         x={source.x}
         y={source.y}
         width={source.width}
@@ -55,4 +52,4 @@ const SourceImage: React.FC<Props> = ({
   )
 }
 
-export default SourceImage
+export default SourceText

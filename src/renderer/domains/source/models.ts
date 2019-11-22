@@ -1,13 +1,20 @@
-export type SourceType = 'image' | 'text'
-
-export type Source = {
+type SourceBase = {
   id: string
-  type: SourceType
   name: string
-  content?: string
-  filepath?: string
   width: number
   height: number
   x: number
   y: number
 }
+
+interface SourceImage extends SourceBase {
+  type: 'image'
+  filepath: string
+}
+
+interface SourceText extends SourceBase {
+  type: 'text'
+  content: string
+}
+
+export type Source = SourceImage | SourceText

@@ -51,7 +51,7 @@ const VrmModel: React.FC<Props> = ({ url, renderTo2dCanvas }) => {
   // Set camera
   useEffect(() => {
     const camera = new THREE.PerspectiveCamera(30.0, aspect, 0.01, 20.0)
-    camera.position.set(0.0, 1, 2.0)
+    camera.position.set(0.0, 1.3, 1.0)
     setDefaultCamera(camera)
   }, [aspect, setDefaultCamera])
 

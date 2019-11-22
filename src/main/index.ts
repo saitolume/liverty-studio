@@ -1,11 +1,9 @@
 import { app, ipcMain, BrowserWindow } from 'electron'
 import loadDevtool from 'electron-load-devtool'
-import { promisify } from 'util'
+import { sizeOf } from './utils/sizeOf'
+import { RES_IMAGE_SIZE, REQ_IMAGE_SIZE } from './../constants/channels'
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const sizeOf = promisify(require('image-size'))
-
-let mainWindow: Electron.BrowserWindow | null = null
+let mainWindow: BrowserWindow | null = null
 
 const inatallExtentions = () => {
   const extensions = ['REACT_DEVELOPER_TOOLS', 'REDUX_DEVTOOLS'] as const
@@ -16,7 +14,8 @@ const createWindow = () => {
   const mainWindow = new BrowserWindow({
     width: 1024,
     height: 728,
-    backgroundColor: '#252525',
+    backgroundColor: '#1a1d21',
+    titleBarStyle: 'hidden',
     webPreferences: {
       nodeIntegration: true,
       webSecurity: false
@@ -26,22 +25,22 @@ const createWindow = () => {
   return mainWindow
 }
 
-ipcMain.on('req-image-size', async (event, imagePath) => {
+ipcMain.on(REQ_IMAGE_SIZE, async (event, imagePath) => {
   try {
     const { width, height } = await sizeOf(imagePath)
-    event.reply('res-image-size', { width, height })
+    event.reply(RES_IMAGE_SIZE, { width, height })
   } catch (err) {
     console.error(err)
   }
 })
 
 app.on('ready', async () => {
+  mainWindow = createWindow()
   try {
     await inatallExtentions()
   } catch (err) {
     console.error(err)
   }
-  mainWindow = createWindow()
 })
 
 app.on('window-all-closed', () => {
