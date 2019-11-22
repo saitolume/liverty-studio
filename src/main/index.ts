@@ -1,6 +1,7 @@
 import { app, ipcMain, BrowserWindow } from 'electron'
 import loadDevtool from 'electron-load-devtool'
 import { sizeOf } from './utils/sizeOf'
+import { RES_IMAGE_SIZE, REQ_IMAGE_SIZE } from './../constants/channels'
 
 let mainWindow: BrowserWindow | null = null
 
@@ -24,10 +25,10 @@ const createWindow = () => {
   return mainWindow
 }
 
-ipcMain.on('req-image-size', async (event, imagePath) => {
+ipcMain.on(REQ_IMAGE_SIZE, async (event, imagePath) => {
   try {
     const { width, height } = await sizeOf(imagePath)
-    event.reply('res-image-size', { width, height })
+    event.reply(RES_IMAGE_SIZE, { width, height })
   } catch (err) {
     console.error(err)
   }

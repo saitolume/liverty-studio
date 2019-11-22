@@ -18,6 +18,7 @@ const SourceAddModal: React.FC<Props> = ({ close, type }) => {
   const { dialog } = remote
   const { addSourceImage } = useSource()
   const [name, setName] = useState('')
+  const [filepath, setFilepath] = useState('')
   const [sourcePreview, setSourcePreview] = useState<Source | null>(null)
   const isSubmitDisabled = !sourcePreview || !name
 
@@ -32,6 +33,7 @@ const SourceAddModal: React.FC<Props> = ({ close, type }) => {
     const { width, height } = await getImageSize(filepath)
     const sourceImage = createSourceImage({ filepath, width, height })
     if (!name) setName(sourceImage.name)
+    setFilepath(sourceImage.filepath)
     setSourcePreview(sourceImage)
   }
 
@@ -61,7 +63,7 @@ const SourceAddModal: React.FC<Props> = ({ close, type }) => {
     <Modal close={close}>
       <Container>
         <ModalHeader>
-          <Title>Add a new source</Title>
+          <Title>Add a new {type}</Title>
         </ModalHeader>
         <ModalBody>
           <PreviewBox>
@@ -78,7 +80,7 @@ const SourceAddModal: React.FC<Props> = ({ close, type }) => {
                     id="image-file"
                     type="text"
                     name="image"
-                    value={sourcePreview?.type === 'image' ? sourcePreview?.filepath : ''}
+                    value={filepath}
                     placeholder="Image File"
                     disabled
                   />
