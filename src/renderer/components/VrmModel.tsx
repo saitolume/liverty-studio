@@ -4,7 +4,7 @@ import { VRMSchema, VRMPose } from '@pixiv/three-vrm'
 import FaceFilter, { FaceFilterState } from 'facefilter'
 import * as THREE from 'three'
 import { useVrm } from '../hooks/useVrm'
-import pose from '../pose.json'
+import pose from '../../config/pose.json'
 
 type Props = {
   url: string

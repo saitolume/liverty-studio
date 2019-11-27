@@ -13,6 +13,11 @@ import VrmModel from './components/VrmModel'
 import { useSource } from './hooks/useSource'
 import { store } from './store'
 import { theme } from './theme'
+import { startLiveStreaming } from './icps'
+
+// interface CanvasElement extends HTMLCanvasElement {
+//   captureStream: (frameRate: number) => MediaStream
+// }
 
 const App: React.FC = hot(() => {
   const { images, sources, updateSource } = useSource()
@@ -21,6 +26,30 @@ const App: React.FC = hot(() => {
 
   const stageHeight = innerHeight * 0.6
   const stageWidth = (stageHeight / 9) * 16
+
+  // const putStream = () => {
+  //   const stageCanvas = (stageRef.current?.content.querySelector('canvas') as unknown) as
+  //     | CanvasElement
+  //     | null
+  //     | undefined
+
+  //   if (!stageCanvas) {
+  //     console.error('Cannot find stage canvas')
+  //     return
+  //   }
+
+  //   const mediaStream = stageCanvas.captureStream(30)
+  //   const mediaRecoader = new MediaRecorder(mediaStream, {
+  //     mimeType: 'video/webm;codecs=h264',
+  //     videoBitsPerSecond: 3000000
+  //   })
+  // }
+
+  // React.useEffect(() => {
+  //   setTimeout(() => {
+  //     putStream()
+  //   }, 10000)
+  // }, [])
 
   const renderVrm = () => {
     const stageCanvas = stageRef.current?.content.querySelector('canvas')
@@ -36,52 +65,49 @@ const App: React.FC = hot(() => {
   }
 
   return (
-    <>
-      <Wrapper>
-        <TitleBar />
-        <Main>
-          <div style={{ margin: '0 auto', backgroundColor: '#000' }}>
-            <Stage
-              ref={(stageRef as unknown) as React.RefObject<Stage>}
-              width={stageWidth}
-              height={stageHeight}>
-              <Layer>
-                {images.map(image => (
-                  <SourceImage
-                    key={image.id}
-                    source={image}
-                    updateSource={updateSource}
-                    isSelected={true}
-                    draggable
-                  />
-                ))}
-              </Layer>
-            </Stage>
-          </div>
-        </Main>
-        <Menus>
-          <MenuSources sources={sources} />
-          <MenuBase title="Mixers"></MenuBase>
-          <MenuBase title="Controls"></MenuBase>
-        </Menus>
-        <VrmCanvas ref={vrmRef}>
-          <Canvas>
-            <ambientLight intensity={0.5} />
-            <spotLight
-              intensity={0.6}
-              position={[30, 30, 50]}
-              angle={0.2}
-              penumbra={1}
-              castShadow
-            />
-            <VrmModel
-              url="https://cdn.glitch.com/e9accf7e-65be-4792-8903-f44e1fc88d68%2Fthree-vrm-girl.vrm?v=1568881824654"
-              renderTo2dCanvas={renderVrm}
-            />
-          </Canvas>
-        </VrmCanvas>
-      </Wrapper>
-    </>
+    <Wrapper>
+      <TitleBar />
+      <Main>
+        <div style={{ margin: '0 auto', backgroundColor: '#000' }}>
+          <Stage
+            ref={(stageRef as unknown) as React.RefObject<Stage>}
+            width={stageWidth}
+            height={stageHeight}>
+            <Layer>
+              {images.map(image => (
+                <SourceImage
+                  key={image.id}
+                  source={image}
+                  updateSource={updateSource}
+                  isSelected={true}
+                  draggable
+                />
+              ))}
+            </Layer>
+          </Stage>
+        </div>
+      </Main>
+      <Menus>
+        <MenuSources sources={sources} />
+        <MenuBase title="Mixers"></MenuBase>
+        <MenuBase title="Controls"></MenuBase>
+      </Menus>
+      <VrmCanvas ref={vrmRef}>
+        <Canvas>
+          <ambientLight intensity={0.5} />
+          <spotLight intensity={0.6} position={[30, 30, 50]} angle={0.2} penumbra={1} castShadow />
+          <VrmModel
+            url="https://cdn.glitch.com/e9accf7e-65be-4792-8903-f44e1fc88d68%2Fthree-vrm-girl.vrm?v=1568881824654"
+            renderTo2dCanvas={renderVrm}
+          />
+        </Canvas>
+      </VrmCanvas>
+      <button
+        style={{ position: 'absolute', top: 0, right: 0 }}
+        onClick={() => startLiveStreaming()}>
+        Start
+      </button>
+    </Wrapper>
   )
 })
 
