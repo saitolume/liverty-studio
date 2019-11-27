@@ -1,13 +1,12 @@
-import { app, ipcMain, BrowserWindow } from 'electron'
+import { app, BrowserWindow } from 'electron'
 import loadDevtool from 'electron-load-devtool'
-import { sizeOf } from './utils/sizeOf'
-import { RES_IMAGE_SIZE, REQ_IMAGE_SIZE } from './../constants/channels'
+import './icps'
 
-let mainWindow: BrowserWindow | null = null
+export let mainWindow: BrowserWindow | null = null
 
-const inatallExtentions = () => {
+const inatallExtentions = async () => {
   const extensions = ['REACT_DEVELOPER_TOOLS', 'REDUX_DEVTOOLS'] as const
-  return Promise.all(extensions.map(name => loadDevtool(loadDevtool[name])))
+  await Promise.all(extensions.map(name => loadDevtool(loadDevtool[name])))
 }
 
 const createWindow = () => {
@@ -21,18 +20,9 @@ const createWindow = () => {
       webSecurity: false
     }
   })
-  mainWindow.loadURL('http://127.0.0.1:3000')
+  mainWindow.loadURL('http://127.0.0.1:8080')
   return mainWindow
 }
-
-ipcMain.on(REQ_IMAGE_SIZE, async (event, imagePath) => {
-  try {
-    const { width, height } = await sizeOf(imagePath)
-    event.reply(RES_IMAGE_SIZE, { width, height })
-  } catch (err) {
-    console.error(err)
-  }
-})
 
 app.on('ready', async () => {
   mainWindow = createWindow()
