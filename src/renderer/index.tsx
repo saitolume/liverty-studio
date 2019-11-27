@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { render } from 'react-dom'
 import { Stage, Layer } from 'react-konva'
 import { hot } from 'react-hot-loader/root'
@@ -15,9 +15,9 @@ import { store } from './store'
 import { theme } from './theme'
 import { startLiveStreaming } from './icps'
 
-// interface CanvasElement extends HTMLCanvasElement {
-//   captureStream: (frameRate: number) => MediaStream
-// }
+interface CanvasElement extends HTMLCanvasElement {
+  captureStream: (frameRate: number) => MediaStream
+}
 
 const App: React.FC = hot(() => {
   const { images, sources, updateSource } = useSource()
@@ -27,29 +27,33 @@ const App: React.FC = hot(() => {
   const stageHeight = innerHeight * 0.6
   const stageWidth = (stageHeight / 9) * 16
 
-  // const putStream = () => {
-  //   const stageCanvas = (stageRef.current?.content.querySelector('canvas') as unknown) as
-  //     | CanvasElement
-  //     | null
-  //     | undefined
+  const putStream = () => {
+    const stageCanvas = (stageRef.current?.content.querySelector('canvas') as unknown) as
+      | CanvasElement
+      | null
+      | undefined
 
-  //   if (!stageCanvas) {
-  //     console.error('Cannot find stage canvas')
-  //     return
-  //   }
+    if (!stageCanvas) {
+      console.error('Cannot find stage canvas')
+      return
+    }
 
-  //   const mediaStream = stageCanvas.captureStream(30)
-  //   const mediaRecoader = new MediaRecorder(mediaStream, {
-  //     mimeType: 'video/webm;codecs=h264',
-  //     videoBitsPerSecond: 3000000
-  //   })
-  // }
+    const mediaStream = stageCanvas.captureStream(30)
+    console.log(mediaStream)
 
-  // React.useEffect(() => {
-  //   setTimeout(() => {
-  //     putStream()
-  //   }, 10000)
-  // }, [])
+    const mediaRecoader = new MediaRecorder(mediaStream, {
+      mimeType: 'video/webm',
+      videoBitsPerSecond: 3000000
+    })
+
+    mediaRecoader.addEventListener('dataavailable', event => {
+      console.log((event as BlobEvent).data)
+    })
+  }
+
+  useEffect(() => {
+    putStream()
+  }, [])
 
   const renderVrm = () => {
     const stageCanvas = stageRef.current?.content.querySelector('canvas')
