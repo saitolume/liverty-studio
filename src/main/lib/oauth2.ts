@@ -1,16 +1,26 @@
 /* eslint-disable @typescript-eslint/camelcase */
 
 import { google } from 'googleapis'
+import { readFile } from 'fs'
 import http from 'http'
 import open from 'open'
+import { resolve } from 'path'
 import url from 'url'
+import { promisify } from 'util'
 import destroyer from 'server-destroy'
-import googleSecret from '../../config/google-secret.json'
 
-const { client_id, client_secret, redirect_uris } = googleSecret.web
-const oauth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0])
+const loadGoogleSecret = async () => {
+  const secretPath = resolve('src', 'config', 'google-secret.json')
+  const asyncReadFile = promisify(readFile)
+  const googleSecret = await asyncReadFile(secretPath, 'utf-8')
+  return JSON.parse(googleSecret)
+}
 
 export const authenticete = async (scopes: string[]) => {
+  const googleSecret = await loadGoogleSecret()
+  const { client_id, client_secret, redirect_uris } = googleSecret.web
+  const oauth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0])
+
   const authUrl = oauth2Client.generateAuthUrl({
     access_type: 'offline',
     scope: scopes.join(' ')
