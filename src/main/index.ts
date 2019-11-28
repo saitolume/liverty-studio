@@ -1,8 +1,9 @@
 import { app, BrowserWindow } from 'electron'
 import loadDevtool from 'electron-load-devtool'
 import './icps'
+import './server'
 
-export let mainWindow: BrowserWindow | null = null
+let mainWindow: BrowserWindow | null = null
 
 const inatallExtentions = async () => {
   const extensions = ['REACT_DEVELOPER_TOOLS', 'REDUX_DEVTOOLS'] as const

@@ -1,8 +1,7 @@
 import { ipcMain } from 'electron'
 import { imageSize } from 'image-size'
 import { promisify } from 'util'
-import { broadcast } from './lib/liveStream'
-import { RES_IMAGE_SIZE, REQ_IMAGE_SIZE, REQ_START_STREAMING } from './../constants/channels'
+import { RES_IMAGE_SIZE, REQ_IMAGE_SIZE } from './../constants/channels'
 
 const sizeOf = promisify(imageSize)
 
@@ -14,9 +13,4 @@ ipcMain.on(REQ_IMAGE_SIZE, async (event, imagePath) => {
   } catch (err) {
     console.error(err)
   }
-})
-
-// Start streaming
-ipcMain.on(REQ_START_STREAMING, () => {
-  broadcast()
 })

@@ -1,5 +1,5 @@
 import { ipcRenderer } from 'electron'
-import { REQ_IMAGE_SIZE, RES_IMAGE_SIZE, REQ_START_STREAMING } from './../constants/channels'
+import { REQ_IMAGE_SIZE, RES_IMAGE_SIZE } from './../constants/channels'
 
 type Size = {
   width: number
@@ -14,7 +14,3 @@ export const getImageSize = (imagePath: string) =>
       resolve(size)
     })
   })
-
-export const startLiveStreaming = () => {
-  ipcRenderer.send(REQ_START_STREAMING)
-}
