@@ -1,12 +1,14 @@
-import React, { useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { Stage, Layer } from 'react-konva'
 import { Canvas } from 'react-three-fiber'
 import Konva from 'konva'
 import styled from 'styled-components'
 import MenuBase from './components/MenuBase'
+import MenuControls from './components/MenuControls'
 import MenuSources from './components/MenuSouces'
 import SourceImage from './components/SourceImage'
 import VrmModel from './components/VrmModel'
+import { useBroadcast } from './hooks/useBroadcast'
 import { useSource } from './hooks/useSource'
 
 interface CanvasElement extends HTMLCanvasElement {
@@ -14,51 +16,13 @@ interface CanvasElement extends HTMLCanvasElement {
 }
 
 const App: React.FC = () => {
+  const { setStream } = useBroadcast()
   const { images, sources, updateSource } = useSource()
   const stageRef = useRef<Konva.Stage>(null)
   const vrmRef = useRef<HTMLDivElement>(null)
 
   const stageHeight = innerHeight * 0.6
   const stageWidth = (stageHeight / 9) * 16
-
-  const putStream = () => {
-    const stageCanvas = (stageRef.current?.content.querySelector('canvas') as unknown) as
-      | CanvasElement
-      | null
-      | undefined
-
-    if (!stageCanvas) {
-      console.error('Cannot find stage canvas')
-      return
-    }
-
-    const ws = new WebSocket('ws://localhost:3000')
-    let mediaRecoader: MediaRecorder | null = null
-
-    ws.addEventListener('open', event => {
-      console.log('WebSocket open', event)
-
-      const mediaStream = stageCanvas.captureStream(30)
-      mediaRecoader = new MediaRecorder(mediaStream, {
-        mimeType: 'video/webm',
-        videoBitsPerSecond: 3000000
-      })
-
-      mediaRecoader.addEventListener('dataavailable', event => {
-        ws.send((event as BlobEvent).data)
-      })
-
-      mediaRecoader.addEventListener('stop', () => ws.close())
-      mediaRecoader.start(1000)
-    })
-
-    ws.addEventListener('close', event => {
-      console.log('WebSocket close', event)
-      if (mediaRecoader) {
-        mediaRecoader.stop()
-      }
-    })
-  }
 
   const renderVrm = () => {
     const stageCanvas = stageRef.current?.content.querySelector('canvas')
@@ -72,6 +36,21 @@ const App: React.FC = () => {
     context.clearRect(stageWidth - width, stageHeight - height, width, height)
     context.drawImage(vrmCanvas, stageWidth - width, stageHeight - height, width, height)
   }
+
+  useEffect(() => {
+    const stageCanvas = (stageRef.current?.content.querySelector('canvas') as unknown) as
+      | CanvasElement
+      | null
+      | undefined
+
+    if (!stageCanvas) {
+      console.error('Cannot find stage canvas')
+      return
+    }
+
+    const mediaStream = stageCanvas.captureStream(30)
+    setStream(mediaStream)
+  }, [setStream])
 
   return (
     <Wrapper>
@@ -99,7 +78,7 @@ const App: React.FC = () => {
       <Menus>
         <MenuSources sources={sources} />
         <MenuBase title="Mixers"></MenuBase>
-        <MenuBase title="Controls"></MenuBase>
+        <MenuControls />
       </Menus>
       <VrmCanvas ref={vrmRef}>
         <Canvas>
@@ -111,9 +90,6 @@ const App: React.FC = () => {
           />
         </Canvas>
       </VrmCanvas>
-      <button style={{ position: 'absolute', top: 0, right: 0 }} onClick={() => putStream()}>
-        Start
-      </button>
     </Wrapper>
   )
 }
