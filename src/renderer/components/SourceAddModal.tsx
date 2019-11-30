@@ -7,7 +7,7 @@ import SourceImage from './SourceImage'
 import SourceText from './SourceText'
 import { createSourceImage, Source } from '../domains/source'
 import { useSource } from '../hooks/useSource'
-import { getImageSize } from '../icps'
+import { getImageSize } from '../ipc'
 
 type Props = {
   close: () => void

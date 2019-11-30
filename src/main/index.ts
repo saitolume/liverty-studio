@@ -1,13 +1,12 @@
 import { app, BrowserWindow } from 'electron'
 import loadDevtool from 'electron-load-devtool'
-import './icps'
-import './server'
+import './ipc'
 
 let mainWindow: BrowserWindow | null = null
 
-const inatallExtentions = async () => {
+const inatallExtentions = () => {
   const extensions = ['REACT_DEVELOPER_TOOLS', 'REDUX_DEVTOOLS'] as const
-  await Promise.all(extensions.map(name => loadDevtool(loadDevtool[name])))
+  return Promise.all(extensions.map(name => loadDevtool(loadDevtool[name])))
 }
 
 const createWindow = () => {
@@ -34,14 +33,14 @@ app.on('ready', async () => {
   }
 })
 
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
-})
-
 app.on('activate', () => {
   if (mainWindow === null) {
     mainWindow = createWindow()
+  }
+})
+
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
+    app.quit()
   }
 })
