@@ -1,7 +1,7 @@
-import childProcess from 'child_process'
+import { spawn } from 'child_process'
 
 export const createFfmpegProcess = (rtmpUrl: string) => {
-  const ffmpeg = childProcess.spawn('ffmpeg', [
+  const ffmpeg = spawn('ffmpeg', [
     '-f',
     'lavfi',
     '-i',
