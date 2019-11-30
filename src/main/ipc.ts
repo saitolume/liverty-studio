@@ -37,6 +37,7 @@ ipcMain.handle(SEND_STREAM_KEY, (_, _stremKey) => {
 ipcMain.handle(START_SERVER, async () => {
   const { server: _server, wss } = await createWebSocketServer()
   server = _server
+  server.listen(3000)
 
   wss.on('connection', ws => {
     const rtmpUrl = `${services[0].url}/${stremKey}`

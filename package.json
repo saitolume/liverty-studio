@@ -16,7 +16,8 @@
     "dev:main": "npm run build:main && electron ./dist/main.js",
     "dev:renderer": "webpack-dev-server --port 8080 --config ./webpack/webpack.config.renderer.ts --hot",
     "format": "npm run lint --fix",
-    "lint": "eslint \"src/**/*.{ts,tsx}\""
+    "lint": "eslint \"src/**/*.{ts,tsx}\"",
+    "test": "jest --config jest.config.json"
   },
   "dependencies": {
     "@hot-loader/react-dom": "^16.11.0",
@@ -44,6 +45,7 @@
     "@types/dom-mediacapture-record": "^1.0.2",
     "@types/electron-load-devtool": "^1.0.1",
     "@types/html-webpack-plugin": "^3.2.1",
+    "@types/jest": "^24.0.23",
     "@types/node": "^12.12.6",
     "@types/react": "^16.9.11",
     "@types/react-dom": "^16.9.4",
@@ -68,10 +70,12 @@
     "html-loader": "^0.5.5",
     "html-webpack-plugin": "^3.2.0",
     "husky": "^3.0.9",
+    "jest": "^24.9.0",
     "lint-staged": "^9.4.2",
     "prettier": "^1.19.0",
     "redux-devtools": "^3.5.0",
     "rimraf": "^3.0.0",
+    "ts-jest": "^24.2.0",
     "ts-loader": "^6.2.1",
     "ts-node": "^8.4.1",
     "typescript": "^3.7.2",

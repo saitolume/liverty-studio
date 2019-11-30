@@ -1,13 +1,8 @@
 import { app, BrowserWindow } from 'electron'
-import loadDevtool from 'electron-load-devtool'
+import { inatallExtension } from './lib/extensions'
 import './ipc'
 
 let mainWindow: BrowserWindow | null = null
-
-const inatallExtentions = () => {
-  const extensions = ['REACT_DEVELOPER_TOOLS', 'REDUX_DEVTOOLS'] as const
-  return Promise.all(extensions.map(name => loadDevtool(loadDevtool[name])))
-}
 
 const createWindow = () => {
   const mainWindow = new BrowserWindow({
@@ -27,7 +22,7 @@ const createWindow = () => {
 app.on('ready', async () => {
   mainWindow = createWindow()
   try {
-    await inatallExtentions()
+    await inatallExtension()
   } catch (err) {
     console.error(err)
   }
