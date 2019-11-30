@@ -1,0 +1,8 @@
+{
+  "services": [
+    {
+      "name": "YouTube",
+      "url": "rtmp://a.rtmp.youtube.com/live2"
+    }
+  ]
+}

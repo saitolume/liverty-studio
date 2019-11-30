@@ -13,7 +13,7 @@ import {
 
 export const useSource = () => {
   const dispatch = useDispatch()
-  const { sources } = useSelector<RootState, SourceState>(({ source }) => source)
+  const sources = useSelector<RootState, SourceState['sources']>(({ source }) => source.sources)
 
   const images = useMemo(() => sources.filter(source => source.type === 'image'), [sources])
 

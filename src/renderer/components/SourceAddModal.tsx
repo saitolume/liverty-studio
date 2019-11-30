@@ -7,7 +7,7 @@ import SourceImage from './SourceImage'
 import SourceText from './SourceText'
 import { createSourceImage, Source } from '../domains/source'
 import { useSource } from '../hooks/useSource'
-import { getImageSize } from '../utils/getImageSize'
+import { getImageSize } from '../ipc'
 
 type Props = {
   close: () => void
@@ -47,7 +47,7 @@ const SourceAddModal: React.FC<Props> = ({ close, type }) => {
       }
       close()
     },
-    [addSourceImage, close, name, sourcePreview, type]
+    [addSourceImage, close, name, sourcePreview]
   )
 
   const SourcePreview = useMemo(() => {
