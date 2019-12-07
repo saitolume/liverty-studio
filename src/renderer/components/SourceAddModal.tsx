@@ -27,9 +27,11 @@ const SourceAddModal: React.FC<Props> = ({ close, type }) => {
 
   const setPreview = async (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     event.preventDefault()
-    const { filePaths } = await remote.dialog.showOpenDialog({})
-    if (!filePaths) return
-    const [filepath] = filePaths
+    const {
+      canceled,
+      filePaths: [filepath]
+    } = await remote.dialog.showOpenDialog({})
+    if (canceled) return
     const { width, height } = await getImageSize(filepath)
     const sourceImage = createSourceImage({ filepath, width, height })
     if (!name) setName(sourceImage.name)
