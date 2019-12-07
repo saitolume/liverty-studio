@@ -5,18 +5,18 @@ import './ipc'
 let mainWindow: BrowserWindow | null = null
 
 const createWindow = () => {
-  const mainWindow = new BrowserWindow({
+  const window = new BrowserWindow({
     width: 1024,
     height: 728,
-    backgroundColor: '#1a1d21',
+    backgroundColor: '#222',
     titleBarStyle: 'hidden',
     webPreferences: {
       nodeIntegration: true,
       webSecurity: false
     }
   })
-  mainWindow.loadURL('http://127.0.0.1:8080')
-  return mainWindow
+  window.loadURL('http://127.0.0.1:8080')
+  return window
 }
 
 app.on('ready', async () => {

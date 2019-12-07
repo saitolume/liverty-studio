@@ -1,15 +1,20 @@
 import React, { useEffect, useRef } from 'react'
+import { hot } from 'react-hot-loader/root'
 import { Stage, Layer } from 'react-konva'
-import { Canvas } from 'react-three-fiber'
 import Konva from 'konva'
 import styled from 'styled-components'
-import MenuBase from './components/MenuBase'
 import MenuControls from './components/MenuControls'
+import MenuMixer from './components/MenuMixer'
 import MenuSources from './components/MenuSouces'
 import SourceImage from './components/SourceImage'
-import VrmModel from './components/VrmModel'
+import StatusBar from './components/StatusBar'
+import TabBar from './components/TabBar'
+import VrmViewer from './components/VrmViewer'
 import { useBroadcast } from './hooks/useBroadcast'
 import { useSource } from './hooks/useSource'
+
+const stageWidth = (innerWidth / 3) * 2
+const stageHeight = (((innerWidth / 3) * 2) / 16) * 9
 
 interface CanvasElement extends HTMLCanvasElement {
   captureStream: (frameRate: number) => MediaStream
@@ -21,10 +26,7 @@ const App: React.FC = () => {
   const stageRef = useRef<Konva.Stage>(null)
   const vrmRef = useRef<HTMLDivElement>(null)
 
-  const stageHeight = innerHeight * 0.6
-  const stageWidth = (stageHeight / 9) * 16
-
-  const renderVrm = () => {
+  const drawVrm = () => {
     const stageCanvas = stageRef.current?.content.querySelector('canvas')
     const vrmCanvas = vrmRef.current?.querySelector('canvas')
 
@@ -53,82 +55,67 @@ const App: React.FC = () => {
   }, [setStream])
 
   return (
-    <Wrapper>
-      <TitleBar />
-      <Main>
-        <div style={{ margin: '0 auto', backgroundColor: '#000' }}>
-          <Stage
-            ref={(stageRef as unknown) as React.RefObject<Stage>}
-            width={stageWidth}
-            height={stageHeight}>
-            <Layer>
-              {images.map(image => (
-                <SourceImage
-                  key={image.id}
-                  source={image}
-                  updateSource={updateSource}
-                  isSelected={true}
-                  draggable
-                />
-              ))}
-            </Layer>
-          </Stage>
-        </div>
-      </Main>
-      <Menus>
-        <MenuSources sources={sources} />
-        <MenuBase title="Mixers"></MenuBase>
-        <MenuControls />
-      </Menus>
-      <VrmCanvas ref={vrmRef}>
-        <Canvas>
-          <ambientLight intensity={0.5} />
-          <spotLight intensity={0.6} position={[30, 30, 50]} angle={0.2} penumbra={1} castShadow />
-          <VrmModel
-            url="https://cdn.glitch.com/e9accf7e-65be-4792-8903-f44e1fc88d68%2Fthree-vrm-girl.vrm?v=1568881824654"
-            renderTo2dCanvas={renderVrm}
-          />
-        </Canvas>
-      </VrmCanvas>
-    </Wrapper>
+    <>
+      <TabBar />
+      <Container>
+        <Main>
+          <Preview>
+            <Stage
+              ref={(stageRef as unknown) as React.RefObject<Stage>}
+              width={stageWidth}
+              height={stageHeight}>
+              <Layer>
+                {images.map(image => (
+                  <SourceImage
+                    key={image.id}
+                    source={image}
+                    updateSource={updateSource}
+                    isSelected
+                    draggable
+                  />
+                ))}
+              </Layer>
+            </Stage>
+          </Preview>
+          <VrmViewer ref={vrmRef} drawVrm={drawVrm} />
+        </Main>
+        <Menus>
+          <MenuSources sources={sources} />
+          <MenuMixer />
+          <MenuControls />
+        </Menus>
+        <StatusBar />
+      </Container>
+    </>
   )
 }
 
-const Wrapper = styled.div`
-  overflow: hidden;
-  width: 100vw;
-  height: 100vh;
+const Container = styled.div`
   display: flex;
   flex-direction: column;
-`
-
-const TitleBar = styled.div`
-  background-color: ${({ theme }) => theme.grayLight};
-  width: 100%;
-  height: 24px;
-  -webkit-app-region: drag;
-`
-
-const VrmCanvas = styled.div`
-  width: 200px;
-  height: ${innerHeight * 0.6 * 0.6}px;
-  visibility: hidden;
-  position: absolute;
-  z-index: -1;
+  overflow: hidden;
+  padding: 12px 12px 0 12px;
+  width: calc(100vw - 24px);
+  height: calc(100vh - 36px);
 `
 
 const Main = styled.div`
-  background-color: ${({ theme }) => theme.grayDark};
+  background-color: ${({ theme }) => theme.gray};
   display: flex;
+  margin-bottom: 12px;
   width: 100%;
-  height: 60vh;
+`
+
+const Preview = styled.div`
+  background-color: #000;
+  width: (innerWidth / 3) * 2;
+  height: (((innerWidth / 3) * 2) / 16) * 9;
 `
 
 const Menus = styled.div`
   display: flex;
+  flex: 1 1;
   width: 100%;
-  height: 40vh;
-  margin-top: auto;
 `
 
-export default App
+export default hot(App)

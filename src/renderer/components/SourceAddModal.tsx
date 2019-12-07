@@ -2,12 +2,16 @@ import React, { useState, useMemo, useCallback } from 'react'
 import { Layer, Stage } from 'react-konva'
 import { remote } from 'electron'
 import styled, { css } from 'styled-components'
+import Button from './Button'
 import Modal from './Modal'
+import Input from './Input'
 import SourceImage from './SourceImage'
-import SourceText from './SourceText'
 import { createSourceImage, Source } from '../domains/source'
 import { useSource } from '../hooks/useSource'
 import { getImageSize } from '../ipc'
+
+const previewWidth = 400
+const previewHeight = (400 / 16) * 9
 
 type Props = {
   close: () => void
@@ -15,19 +19,15 @@ type Props = {
 }
 
 const SourceAddModal: React.FC<Props> = ({ close, type }) => {
-  const { dialog } = remote
   const { addSourceImage } = useSource()
   const [name, setName] = useState('')
   const [filepath, setFilepath] = useState('')
   const [sourcePreview, setSourcePreview] = useState<Source | null>(null)
-  const isSubmitDisabled = !sourcePreview || !name
+  const isDisabled = !sourcePreview || !name
 
-  const previewWidth = 400
-  const previewHeight = (400 / 16) * 9
-
-  const setPreview = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const setPreview = async (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     event.preventDefault()
-    const { filePaths } = await dialog.showOpenDialog({})
+    const { filePaths } = await remote.dialog.showOpenDialog({})
     if (!filePaths) return
     const [filepath] = filePaths
     const { width, height } = await getImageSize(filepath)
@@ -37,9 +37,9 @@ const SourceAddModal: React.FC<Props> = ({ close, type }) => {
     setSourcePreview(sourceImage)
   }
 
-  const submit = useCallback(
+  const addSource = useCallback(
     async (event?: React.KeyboardEvent<HTMLInputElement>) => {
-      if (event && event.keyCode !== 13) return
+      if ((event && event.keyCode !== 13) || isDisabled) return
       switch (sourcePreview?.type) {
         case 'image':
           addSourceImage({ ...sourcePreview, name })
@@ -47,15 +47,13 @@ const SourceAddModal: React.FC<Props> = ({ close, type }) => {
       }
       close()
     },
-    [addSourceImage, close, name, sourcePreview]
+    [addSourceImage, close, isDisabled, name, sourcePreview]
   )
 
   const SourcePreview = useMemo(() => {
     switch (type) {
       case 'image':
         return SourceImage
-      case 'text':
-        return SourceText
     }
   }, [type])
 
@@ -76,7 +74,7 @@ const SourceAddModal: React.FC<Props> = ({ close, type }) => {
               <>
                 <Label htmlFor="image-file">Image File</Label>
                 <FlexBox>
-                  <Input
+                  <SourceInfoInput
                     id="image-file"
                     type="text"
                     name="image"
@@ -89,19 +87,19 @@ const SourceAddModal: React.FC<Props> = ({ close, type }) => {
               </>
             )}
             <Label htmlFor="name">Name</Label>
-            <Input
+            <SourceInfoInput
               id="name"
               type="text"
               value={name}
               placeholder="Name"
               onChange={event => setName(event.target.value)}
-              onKeyDown={submit}
+              onKeyDown={addSource}
             />
           </SourceForm>
           <ActionButtonList>
-            <SubmitButton onClick={() => submit()} disabled={isSubmitDisabled}>
+            <AddButton onClick={() => addSource()} disabled={isDisabled}>
               Add
-            </SubmitButton>
+            </AddButton>
             <CancelButton onClick={() => close()}>Cancel</CancelButton>
           </ActionButtonList>
         </ModalBody>
@@ -111,6 +109,7 @@ const SourceAddModal: React.FC<Props> = ({ close, type }) => {
 }
 
 const Container = styled.div`
+  background-color: ${({ theme }) => theme.grayDark};
   width: 400px;
 `
 
@@ -145,53 +144,25 @@ const FlexBox = styled.div`
 `
 
 const Label = styled.label`
-  color: ${({ theme }) => theme.white};
+  color: #fff;
   display: block;
   font-size: 12px;
   line-height: 16px;
   margin-bottom: 8px;
 `
 
-const Input = styled.input`
-  background-color: ${({ theme }) => theme.grayDark};
-  border: 1px solid ${({ theme }) => theme.grayLight};
-  border-radius: 4px;
-  caret-color: ${({ theme }) => theme.white};
-  color: ${({ theme }) => theme.white};
-  font-size: 16px;
-  line-height: 16px;
-  outline: 0;
+const SourceInfoInput = styled(Input)`
+  margin-bottom: 24px;
   padding: 12px;
-  margin-bottom: 24px;
   width: calc(100% - 24px);
-  transition: border 0.15s;
-  &:focus {
-    border: 1px solid ${({ theme }) => theme.white};
-  }
-`
-
-const Button = styled.button`
-  background-color: ${({ theme }) => theme.grayDark};
-  border: 1px solid ${({ theme }) => theme.grayLight};
-  border-radius: 4px;
-  color: ${({ theme }) => theme.white};
-  cursor: pointer;
-  height: 32px;
-  min-width: 56px;
-  margin-bottom: 24px;
-  outline: 0;
-  transition: background-color 0.15s, filter 0.15s;
-  &:hover {
-    filter: brightness(1.1);
-  }
-  &:active {
-    border: 1px solid ${({ theme }) => theme.white};
-  }
+  height: 100%;
 `
 
 const BrowseButton = styled(Button)`
-  height: 44px;
+  line-height: 34px;
   margin-left: 8px;
+  width: 64px;
+  height: 34px;
 `
 
 const ActionButtonList = styled.div`
@@ -203,7 +174,7 @@ const CancelButton = styled(Button)`
   margin-right: 8px;
 `
 
-const SubmitButton = styled(Button)<{ disabled: boolean }>`
+const AddButton = styled(Button)<{ disabled: boolean }>`
   background-color: ${({ theme }) => theme.primary};
   border: 1px solid ${({ theme }) => theme.primary};
   ${({ disabled }) =>
