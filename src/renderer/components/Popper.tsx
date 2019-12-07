@@ -37,7 +37,6 @@ const Popper: React.FC<Props> = ({ children, className, close, ...props }) => {
 }
 
 const Wrapper = styled.div<{ top?: number; right?: number; left?: number; bottom?: number }>`
-  background-color: ${({ theme }) => theme.grayDark};
   box-shadow: 0 0 24px #00000050;
   position: absolute;
   ${({ top }) => typeof top === 'number' && `top: ${top}px;`}

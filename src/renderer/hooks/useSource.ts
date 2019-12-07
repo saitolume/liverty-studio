@@ -1,6 +1,5 @@
 import { useCallback, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import uuid from 'uuid/v4'
 import { RootState } from '../domains'
 import {
   Source,
@@ -35,40 +34,22 @@ export const useSource = () => {
     [dispatch]
   )
 
-  const addSourceText = useCallback(
-    ({ content, width, height }: { content: string; width: number; height: number }) => {
-      const text: Source = {
-        id: uuid(),
-        type: 'text',
-        name: content,
-        content,
-        width,
-        height,
-        x: 4,
-        y: 4
-      }
-      dispatch(addSource(text))
-    },
-    [dispatch]
-  )
-
   const removeSource = useCallback(
-    (itemId: Source['id']) => {
-      dispatch(_removeSource(itemId))
+    (sourceId: Source['id']) => {
+      dispatch(_removeSource(sourceId))
     },
     [dispatch]
   )
 
   const updateSource = useCallback(
-    (item: Source) => {
-      dispatch(_updateSouce(item))
+    (source: Source) => {
+      dispatch(_updateSouce(source))
     },
     [dispatch]
   )
 
   return {
     addSourceImage,
-    addSourceText,
     images,
     removeSource,
     sources,

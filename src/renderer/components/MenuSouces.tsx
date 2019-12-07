@@ -6,7 +6,7 @@ import Popper from './Popper'
 import { Source } from '../domains/source/models'
 import { useSource } from '../hooks/useSource'
 
-const sourceTypes = ['image', 'text'] as const
+const sourceTypes = ['image'] as const
 
 type Props = {
   sources: Source[]
@@ -18,54 +18,52 @@ const MenuSources: React.FC<Props> = ({ sources }) => {
   const [isPopperOpen, setIsPopperOpen] = useState(false)
   const [modalType, setModalType] = useState<Source['type'] | null>(null)
 
-  const closePopper = () => {
+  const openModal = (type: Source['type']) => {
     setIsPopperOpen(false)
-  }
-
-  const openPopper = () => {
-    setIsPopperOpen(true)
-  }
-
-  const onClickSourceTypeItem = (sourceType: Source['type']) => {
-    closePopper()
-    setModalType(sourceType)
+    setModalType(type)
     setIsModalOpen(true)
-  }
-
-  const closeModal = () => {
-    setIsModalOpen(false)
   }
 
   return (
     <>
       <MenuBase title="Sources">
         {sources.map(source => (
-          <SourceBox key={source.id}>
+          <SourceItem key={source.id}>
             {source.name}
             <button onClick={() => removeSource(source.id)}>-</button>
-          </SourceBox>
+          </SourceItem>
         ))}
-        <MenuSourcesActions>
-          <button onClick={openPopper}>+</button>
+        <SourceMenus>
+          <button onClick={() => setIsPopperOpen(true)}>+</button>
           {isPopperOpen && (
-            <Popper close={closePopper} top={-(sourceTypes.length * 32 + 10)}>
+            <Popper close={() => setIsPopperOpen(false)} top={-sourceTypes.length * 32}>
               <SourceTypeList>
-                {sourceTypes.map((sourceType, index) => (
-                  <SourceTypeItem key={index} onClick={() => onClickSourceTypeItem(sourceType)}>
-                    {sourceType}
+                {sourceTypes.map(type => (
+                  <SourceTypeItem key={type} onClick={() => openModal(type)}>
+                    {type}
                   </SourceTypeItem>
                 ))}
               </SourceTypeList>
             </Popper>
           )}
-        </MenuSourcesActions>
+        </SourceMenus>
       </MenuBase>
-      {isModalOpen && modalType && <SourceAddModal type={modalType} close={closeModal} />}
+      {isModalOpen && modalType && (
+        <SourceAddModal type={modalType} close={() => setIsModalOpen(false)} />
+      )}
     </>
   )
 }
 
-const SourceBox = styled.div`
+const SourceMenus = styled.div`
+  background-color: ${({ theme }) => theme.gray};
+  margin-top: auto;
+  padding-top: 4px;
+  position: relative;
+  width: 100%;
+`
+
+const SourceItem = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.grayLight};
   display: flex;
   justify-content: space-between;
@@ -75,17 +73,8 @@ const SourceBox = styled.div`
   height: 32px;
 `
 
-const MenuSourcesActions = styled.div`
-  background-color: ${({ theme }) => theme.grayLight};
-  line-height: 32px;
-  margin-top: auto;
-  padding: 0 8px;
-  position: relative;
-  width: calc(100% - 16px);
-  height: 32px;
-`
-
 const SourceTypeList = styled.div`
+  background-color: ${({ theme }) => theme.grayDark};
   border-radius: 6px;
   box-shadow: 0 0 0 1px #333;
   width: 150px;
@@ -98,7 +87,7 @@ const SourceTypeItem = styled.div`
   width: calc(100% - 16px);
   height: 24px;
   &:hover {
-    background-color: ${({ theme }) => theme.grayLight};
+    background-color: ${({ theme }) => theme.gray};
   }
   &:first-child {
     border-radius: 6px 6px 0 0;
