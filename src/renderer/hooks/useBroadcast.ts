@@ -1,5 +1,6 @@
-import { useCallback, useRef } from 'react'
+import { useCallback, useMemo, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useTimer } from './useTimer'
 import { RootState } from '../domains'
 import {
   BroadcastState,
@@ -21,6 +22,15 @@ export const useBroadcast = () => {
   const stream = useSelector<RootState, BroadcastState['stream']>(
     ({ broadcast }) => broadcast.stream
   )
+
+  const { time } = useTimer(isStreaming)
+
+  const broadcastTime = useMemo(() => {
+    const hour = Math.floor(time / 3600)
+    const minute = Math.floor(time / 60)
+    const second = time - hour * 3600 - minute * 60
+    return `${('0' + hour).slice(-2)}:${('0' + minute).slice(-2)}:${('0' + second).slice(-2)}`
+  }, [time])
 
   const startStreaming = useCallback(
     async (streamKey: string) => {
@@ -76,6 +86,7 @@ export const useBroadcast = () => {
 
   return {
     isStreaming,
+    broadcastTime,
     finishStreaming,
     setStream,
     startStreaming

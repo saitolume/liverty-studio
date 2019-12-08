@@ -1,13 +1,44 @@
-import React from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import styled from 'styled-components'
+import { useBroadcast } from '../hooks/useBroadcast'
 
-const StatusBar: React.FC = () => (
-  <Wrapper>
-    <Span>30 fps</Span>
-    <Span>CPU: 0.0%</Span>
-    <Span>LIVE: 00:00:00</Span>
-  </Wrapper>
-)
+const StatusBar: React.FC = () => {
+  const { broadcastTime } = useBroadcast()
+  const [cpuStatus, setCpuStatus] = useState(0.0)
+  const [memoryStatus, setMemoryStatus] = useState(0.0)
+
+  const { getCPUUsage, getProcessMemoryInfo, getSystemMemoryInfo } = process
+  const { total } = getSystemMemoryInfo()
+
+  const calcPercentCpuUsage = useCallback(() => {
+    const { percentCPUUsage } = getCPUUsage()
+    return Math.round(percentCPUUsage * 100) / 100
+  }, [getCPUUsage])
+
+  // This is a lie
+  const calcPercentMemoryUsage = useCallback(async () => {
+    const { private: notShared, shared } = await getProcessMemoryInfo()
+    const percentMemoryUsage = ((notShared + shared) / total) * 100
+    return Math.round(percentMemoryUsage * 100) / 100
+  }, [getProcessMemoryInfo, total])
+
+  useEffect(() => {
+    setInterval(async () => {
+      const percentCpuUsage = calcPercentCpuUsage()
+      const percentMemoryUsage = await calcPercentMemoryUsage()
+      setCpuStatus(percentCpuUsage)
+      setMemoryStatus(percentMemoryUsage)
+    }, 1000)
+  }, [calcPercentCpuUsage, calcPercentMemoryUsage])
+
+  return (
+    <Wrapper>
+      <Span>Memory: {memoryStatus.toFixed(2)}%</Span>
+      <Span>CPU: {cpuStatus.toFixed(2)}%</Span>
+      <Span>LIVE: {broadcastTime}</Span>
+    </Wrapper>
+  )
+}
 
 const Wrapper = styled.div`
   display: flex;
