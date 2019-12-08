@@ -20,6 +20,9 @@
     "test": "jest --config jest.config.json"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.25",
+    "@fortawesome/free-solid-svg-icons": "^5.11.2",
+    "@fortawesome/react-fontawesome": "^0.1.8",
     "@hot-loader/react-dom": "^16.11.0",
     "@pixiv/three-vrm": "^0.2.0",
     "facefilter": "^1.1.3",

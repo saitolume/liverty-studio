@@ -2,19 +2,19 @@ import React from 'react'
 import styled from 'styled-components'
 
 type Props = {
+  circle?: boolean
   className?: string
-  onClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
-}
+} & React.InputHTMLAttributes<HTMLDivElement>
 
-const Button: React.FC<Props> = ({ children, className, onClick }) => (
-  <StyledButton className={className} onClick={onClick}>
+const Button: React.FC<Props> = ({ children, circle = false, className, ...props }) => (
+  <StyledButton className={className} circle={circle} {...props}>
     {children}
   </StyledButton>
 )
 
-const StyledButton = styled.div`
+const StyledButton = styled.div<{ circle: boolean }>`
   background-color: ${({ theme }) => theme.grayLight};
-  border-radius: 4px;
+  border-radius: ${({ circle }) => (circle ? '50%' : '4px')};
   box-shadow: 0 0 24px #00000050;
   cursor: pointer;
   line-height: 24px;
