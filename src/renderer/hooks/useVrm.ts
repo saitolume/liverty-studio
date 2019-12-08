@@ -21,5 +21,9 @@ export const useVrm = () => {
     setIsLoading(false)
   }
 
-  return { vrm, loadVrm, isLoading }
+  const resetVrm = () => {
+    setVrm(null)
+  }
+
+  return { vrm, isLoading, loadVrm, resetVrm }
 }
