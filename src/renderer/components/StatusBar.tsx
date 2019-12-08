@@ -1,9 +1,10 @@
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { useBroadcast } from '../hooks/useBroadcast'
 
 const StatusBar: React.FC = () => {
   const { broadcastTime } = useBroadcast()
+  const intervalId = useRef<number>()
   const [cpuStatus, setCpuStatus] = useState(0.0)
   const [memoryStatus, setMemoryStatus] = useState(0.0)
 
@@ -23,12 +24,15 @@ const StatusBar: React.FC = () => {
   }, [getProcessMemoryInfo, total])
 
   useEffect(() => {
-    setInterval(async () => {
+    intervalId.current = setInterval(async () => {
       const percentCpuUsage = calcPercentCpuUsage()
       const percentMemoryUsage = await calcPercentMemoryUsage()
       setCpuStatus(percentCpuUsage)
       setMemoryStatus(percentMemoryUsage)
     }, 1000)
+    return () => {
+      clearInterval(intervalId.current)
+    }
   }, [calcPercentCpuUsage, calcPercentMemoryUsage])
 
   return (
