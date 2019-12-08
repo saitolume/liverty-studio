@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useCallback, useEffect, useRef } from 'react'
 import { hot } from 'react-hot-loader/root'
 import { Stage, Layer } from 'react-konva'
 import Konva from 'konva'
@@ -25,32 +25,41 @@ const App: React.FC = () => {
   const { images, sources, updateSource } = useSource()
   const stageRef = useRef<Konva.Stage>(null)
   const vrmRef = useRef<HTMLDivElement>(null)
+  const stageCanvas = useRef<CanvasElement | null>()
+  const vrmCanvas = useRef<HTMLCanvasElement | null>()
 
-  const drawVrm = () => {
-    const stageCanvas = stageRef.current?.content.querySelector('canvas')
-    const vrmCanvas = vrmRef.current?.querySelector('canvas')
+  const clearVrm = useCallback(() => {
+    if (!vrmCanvas.current) return
+    const { clientWidth, clientHeight } = vrmCanvas.current
+    stageCanvas.current
+      ?.getContext('2d')
+      ?.clearRect(stageWidth - clientWidth, stageHeight - clientHeight, clientWidth, clientHeight)
+  }, [])
 
-    if (!stageCanvas || !vrmCanvas) return
-    const context = stageCanvas.getContext('2d')
+  const drawVrm = useCallback(() => {
+    if (!vrmCanvas.current) return
+    const { clientWidth, clientHeight } = vrmCanvas.current
+    stageCanvas.current
+      ?.getContext('2d')
+      ?.drawImage(
+        vrmCanvas.current,
+        stageWidth - clientWidth,
+        stageHeight - clientHeight,
+        clientWidth,
+        clientHeight
+      )
+  }, [])
 
-    if (!context) return
-    const { width, height } = vrmCanvas
-    context.clearRect(stageWidth - width, stageHeight - height, width, height)
-    context.drawImage(vrmCanvas, stageWidth - width, stageHeight - height, width, height)
-  }
-
+  // Get canvas refs
   useEffect(() => {
-    const stageCanvas = (stageRef.current?.content.querySelector('canvas') as unknown) as
-      | CanvasElement
-      | null
-      | undefined
+    stageCanvas.current = stageRef.current?.content.querySelector<CanvasElement>('canvas')
+    vrmCanvas.current = vrmRef.current?.querySelector('canvas')
+  }, [])
 
-    if (!stageCanvas) {
-      console.error('Cannot find stage canvas')
-      return
-    }
-
-    const mediaStream = stageCanvas.captureStream(30)
+  // Capture media stream
+  useEffect(() => {
+    if (!stageCanvas.current) return
+    const mediaStream = stageCanvas.current.captureStream(30)
     setStream(mediaStream)
   }, [setStream])
 
@@ -77,7 +86,7 @@ const App: React.FC = () => {
               </Layer>
             </Stage>
           </Preview>
-          <VrmViewer ref={vrmRef} drawVrm={drawVrm} />
+          <VrmViewer ref={vrmRef} clearVrm={clearVrm} drawVrm={drawVrm} />
         </Main>
         <Menus>
           <MenuSources sources={sources} />

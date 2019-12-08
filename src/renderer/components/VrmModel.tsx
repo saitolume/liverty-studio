@@ -5,11 +5,11 @@ import FaceFilter, { FaceFilterState } from 'facefilter'
 import * as THREE from 'three'
 
 type Props = {
-  drawVrm: () => void
+  updateVrm: () => void
   vrm: VRM | null
 }
 
-const VrmModel: React.FC<Props> = ({ drawVrm, vrm }) => {
+const VrmModel: React.FC<Props> = ({ updateVrm, vrm }) => {
   const { aspect, setDefaultCamera } = useThree()
 
   const handleJeelizTrack = useCallback(
@@ -42,7 +42,6 @@ const VrmModel: React.FC<Props> = ({ drawVrm, vrm }) => {
           console.error(err)
           return
         }
-        console.log('info: JeeFaceFilter is ready')
       },
       callbackTrack: handleJeelizTrack
     })
@@ -54,7 +53,7 @@ const VrmModel: React.FC<Props> = ({ drawVrm, vrm }) => {
     const blink = Math.max(0.0, 1.0 - 10.0 * Math.abs((clock.getElapsedTime() % 4.0) - 2.0))
     vrm.blendShapeProxy?.setValue(VRMSchema.BlendShapePresetName.Blink, blink)
     gl.render(scene, camera)
-    drawVrm()
+    updateVrm()
   })
 
   return vrm ? <primitive object={vrm.scene} /> : null
