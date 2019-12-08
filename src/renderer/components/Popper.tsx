@@ -3,7 +3,7 @@ import styled from 'styled-components'
 
 type Props = {
   className?: string
-  close: () => void
+  close?: () => void
   top?: number
   right?: number
   left?: number
@@ -16,7 +16,7 @@ const Popper: React.FC<Props> = ({ children, className, close, ...props }) => {
   const onOutsideClick = useCallback(
     (event: MouseEvent) => {
       const isClickInside = ref.current?.contains(event.target as Node)
-      if (isClickInside) return
+      if (isClickInside || !close) return
       close()
     },
     [close]
@@ -40,9 +40,9 @@ const Wrapper = styled.div<{ top?: number; right?: number; left?: number; bottom
   box-shadow: 0 0 24px #00000050;
   position: absolute;
   ${({ top }) => typeof top === 'number' && `top: ${top}px;`}
-  ${({ right }) => right && `right: ${right}px;`}
-  ${({ left }) => left && `left: ${left}px;`}
-  ${({ bottom }) => bottom && `bottom: ${bottom}px;`}
+  ${({ right }) => typeof right === 'number' && `right: ${right}px;`}
+  ${({ left }) => typeof left === 'number' && `left: ${left}px;`}
+  ${({ bottom }) => typeof bottom === 'number' && `bottom: ${bottom}px;`}
   z-index: 9999;
 `
 
