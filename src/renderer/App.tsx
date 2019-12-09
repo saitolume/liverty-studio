@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { hot } from 'react-hot-loader/root'
 import { Stage, Layer } from 'react-konva'
 import Konva from 'konva'
@@ -11,6 +11,7 @@ import StatusBar from './components/StatusBar'
 import TabBar from './components/TabBar'
 import VrmViewer from './components/VrmViewer'
 import { useBroadcast } from './hooks/useBroadcast'
+import { useMicrophone } from './hooks/useMicrophone'
 import { useSource } from './hooks/useSource'
 
 const stageWidth = (innerWidth / 3) * 2
@@ -22,21 +23,22 @@ interface CanvasElement extends HTMLCanvasElement {
 
 const App: React.FC = () => {
   const { setStream } = useBroadcast()
+  const microphone = useMicrophone()
   const { images, sources, updateSource } = useSource()
   const stageRef = useRef<Konva.Stage>(null)
   const vrmRef = useRef<HTMLDivElement>(null)
   const stageCanvas = useRef<CanvasElement | null>()
   const vrmCanvas = useRef<HTMLCanvasElement | null>()
 
-  const clearVrm = useCallback(() => {
+  const clearVrm = () => {
     if (!vrmCanvas.current) return
     const { clientWidth, clientHeight } = vrmCanvas.current
     stageCanvas.current
       ?.getContext('2d')
       ?.clearRect(stageWidth - clientWidth, stageHeight - clientHeight, clientWidth, clientHeight)
-  }, [])
+  }
 
-  const drawVrm = useCallback(() => {
+  const drawVrm = () => {
     if (!vrmCanvas.current) return
     const { clientWidth, clientHeight } = vrmCanvas.current
     stageCanvas.current
@@ -48,7 +50,7 @@ const App: React.FC = () => {
         clientWidth,
         clientHeight
       )
-  }, [])
+  }
 
   // Get canvas refs
   useEffect(() => {
@@ -58,10 +60,11 @@ const App: React.FC = () => {
 
   // Capture media stream
   useEffect(() => {
-    if (!stageCanvas.current) return
+    if (!stageCanvas.current || !microphone.audioTrack) return
     const mediaStream = stageCanvas.current.captureStream(30)
+    mediaStream.addTrack(microphone.audioTrack)
     setStream(mediaStream)
-  }, [setStream])
+  }, [microphone.audioTrack, setStream])
 
   return (
     <>
@@ -90,7 +93,7 @@ const App: React.FC = () => {
         </Main>
         <Menus>
           <MenuSources sources={sources} />
-          <MenuMixer />
+          <MenuMixer microphone={microphone} />
           <MenuControls />
         </Menus>
         <StatusBar />
