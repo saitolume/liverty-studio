@@ -45,7 +45,8 @@ export const useBroadcast = () => {
 
         mediaRecoder.current = new MediaRecorder(stream, {
           mimeType: 'video/webm',
-          videoBitsPerSecond: 3000000
+          audioBitsPerSecond: 128000,
+          videoBitsPerSecond: 4096000
         })
 
         mediaRecoder.current.addEventListener('dataavailable', event => {
