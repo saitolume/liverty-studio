@@ -2,11 +2,16 @@ import React from 'react'
 import styled from 'styled-components'
 import MenuBase from './MenuBase'
 import Mixer from './Mixer'
+import { Microphone } from '../hooks/useMicrophone'
 
-const MenuMixer: React.FC = () => {
+type Props = {
+  microphone: Microphone | null
+}
+
+const MenuMixer: React.FC<Props> = ({ microphone }) => {
   return (
     <Wrapper title="Mixer">
-      <Mixer />
+      <Mixer audio={microphone} />
     </Wrapper>
   )
 }

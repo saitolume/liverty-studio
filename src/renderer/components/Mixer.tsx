@@ -3,13 +3,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCog, faVolumeMute, faVolumeUp } from '@fortawesome/free-solid-svg-icons'
 import styled from 'styled-components'
 import Button from './Button'
+import { Microphone } from '../hooks/useMicrophone'
 import { theme } from '../../constants/theme'
 
 const { gray } = theme
 
-type Props = {}
+type Props = {
+  audio: Microphone | null
+}
 
-const Mixer: React.FC<Props> = () => {
+const Mixer: React.FC<Props> = ({ audio }) => {
   const ratioBarRef = useRef<SVGLineElement>(null)
   const wrapperRef = useRef<HTMLDivElement>(null)
   const [isMuted, setIsMuted] = useState(false)
@@ -25,7 +28,7 @@ const Mixer: React.FC<Props> = () => {
       const { left } = ratioBarRef.current.getBoundingClientRect()
       const position = event.clientX - left - 15
       if (position < 0 || position > ratioBarWidth - 30) return
-      const ratio = Math.ceil((position / ratioBarWidth / 0.85) * 100) / 100
+      const ratio = Math.floor((position / ratioBarWidth / 0.84) * 100) / 100
       setRatio(ratio)
     },
     [isScrolling, ratioBarWidth]
@@ -42,7 +45,7 @@ const Mixer: React.FC<Props> = () => {
   return (
     <Wrapper ref={wrapperRef}>
       <FlexBox>
-        <div>Microphone</div>
+        <div>{audio?.deviceName}</div>
         <div>0.0 dB</div>
       </FlexBox>
       <SoundPressureVisualizer viewBox={`0 0 ${width} 5`}>
@@ -61,13 +64,13 @@ const Mixer: React.FC<Props> = () => {
         <line
           x1="0"
           y1="8"
-          x2={ratioBarWidth * ratio * 0.85}
+          x2={ratioBarWidth * ratio * 0.84}
           y2="8"
           stroke="#528eff"
           strokeWidth="5"
         />
         <Handle
-          x={ratioBarWidth * ratio * 0.85}
+          x={ratioBarWidth * ratio * 0.84}
           y="0"
           width="30"
           height="16"
