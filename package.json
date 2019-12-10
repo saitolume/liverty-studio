@@ -15,7 +15,7 @@
     "dev": "concurrently \"npm run dev:renderer\" \"npm run dev:main\"",
     "dev:main": "npm run build:main && electron ./dist/main.js",
     "dev:renderer": "webpack-dev-server --port 8080 --config ./webpack/webpack.config.renderer.ts --hot",
-    "format": "npm run lint --fix",
+    "format": "eslint \"src/**/*.{ts,tsx}\" --fix",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "test": "jest --config jest.config.json"
   },
