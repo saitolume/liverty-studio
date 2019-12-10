@@ -10,6 +10,9 @@ import {
 } from '../domains/broadcast'
 import { sendStreamKey, startServer, terminateServer } from '../ipc'
 
+const formatTime = (hours: number, minutes: number, seconds: number) =>
+  [hours, minutes, seconds].map(time => ('0' + time).slice(-2)).join(':')
+
 export const useBroadcast = () => {
   const dispatch = useDispatch()
   const mediaRecoder = useRef<MediaRecorder | null>(null)
@@ -26,10 +29,10 @@ export const useBroadcast = () => {
   const { time } = useTimer(isStreaming)
 
   const broadcastTime = useMemo(() => {
-    const hour = Math.floor(time / 3600)
-    const minute = Math.floor(time / 60)
-    const second = time - hour * 3600 - minute * 60
-    return `${('0' + hour).slice(-2)}:${('0' + minute).slice(-2)}:${('0' + second).slice(-2)}`
+    const hours = Math.floor(time / 3600)
+    const minutes = Math.floor(time / 60)
+    const seconds = time - hours * 3600 - minutes * 60
+    return formatTime(hours, minutes, seconds)
   }, [time])
 
   const startStreaming = useCallback(

@@ -4,7 +4,7 @@ import { Stage, Layer } from 'react-konva'
 import Konva from 'konva'
 import styled from 'styled-components'
 import MenuControls from './components/MenuControls'
-import MenuMixer from './components/MenuMixer'
+import MenuMixer from './components/MenuMixers'
 import MenuSources from './components/MenuSouces'
 import SourceImage from './components/SourceImage'
 import StatusBar from './components/StatusBar'
@@ -22,7 +22,7 @@ interface CanvasElement extends HTMLCanvasElement {
 }
 
 const App: React.FC = () => {
-  const { setStream } = useBroadcast()
+  const { broadcastTime, setStream } = useBroadcast()
   const microphone = useMicrophone()
   const { images, sources, updateSource } = useSource()
   const stageRef = useRef<Konva.Stage>(null)
@@ -69,7 +69,7 @@ const App: React.FC = () => {
   return (
     <>
       <TabBar />
-      <Container>
+      <Wrapper>
         <Main>
           <Preview>
             <Stage
@@ -96,13 +96,13 @@ const App: React.FC = () => {
           <MenuMixer microphone={microphone} />
           <MenuControls />
         </Menus>
-        <StatusBar />
-      </Container>
+        <StatusBar broadcastTime={broadcastTime} />
+      </Wrapper>
     </>
   )
 }
 
-const Container = styled.div`
+const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -120,8 +120,6 @@ const Main = styled.div`
 
 const Preview = styled.div`
   background-color: #000;
-  width: (innerWidth / 3) * 2;
-  height: (((innerWidth / 3) * 2) / 16) * 9;
 `
 
 const Menus = styled.div`

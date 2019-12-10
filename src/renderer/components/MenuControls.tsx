@@ -18,7 +18,7 @@ const MenuControls: React.FC = () => {
   }
 
   return (
-    <Wrapper title="Controls">
+    <Wrapper name="Controls">
       <ControlButton onClick={toggleStreaming}>
         {isStreaming ? 'Stop' : 'Start'} Streaming
       </ControlButton>

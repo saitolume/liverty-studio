@@ -1,9 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
-import { useBroadcast } from '../hooks/useBroadcast'
 
-const StatusBar: React.FC = () => {
-  const { broadcastTime } = useBroadcast()
+type Props = {
+  broadcastTime: string
+}
+
+const StatusBar: React.FC<Props> = ({ broadcastTime }) => {
   const intervalId = useRef<number>()
   const [cpuStatus, setCpuStatus] = useState(0.0)
   const [memoryStatus, setMemoryStatus] = useState(0.0)

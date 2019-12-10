@@ -13,7 +13,7 @@ type Props = {
 const Popper: React.FC<Props> = ({ children, className, close, ...props }) => {
   const ref = useRef<HTMLDivElement>(null)
 
-  const onOutsideClick = useCallback(
+  const closePopper = useCallback(
     (event: MouseEvent) => {
       const isClickInside = ref.current?.contains(event.target as Node)
       if (isClickInside || !close) return
@@ -23,11 +23,11 @@ const Popper: React.FC<Props> = ({ children, className, close, ...props }) => {
   )
 
   useEffect(() => {
-    document.body.addEventListener('click', onOutsideClick)
+    document.body.addEventListener('click', closePopper)
     return () => {
-      document.body.removeEventListener('click', onOutsideClick)
+      document.body.removeEventListener('click', closePopper)
     }
-  }, [onOutsideClick])
+  }, [closePopper])
 
   return (
     <Wrapper className={className} ref={ref} {...props}>

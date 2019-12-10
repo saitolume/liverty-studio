@@ -6,8 +6,6 @@ import Button from './Button'
 import { Microphone } from '../hooks/useMicrophone'
 import { theme } from '../../constants/theme'
 
-const { gray } = theme
-
 type Props = {
   audio: Microphone | null
 }
@@ -58,7 +56,7 @@ const Mixer: React.FC<Props> = ({ audio }) => {
           y1="8"
           x2={ratioBarWidth}
           y2="8"
-          stroke={gray}
+          stroke={theme.gray}
           strokeWidth="5"
         />
         <line

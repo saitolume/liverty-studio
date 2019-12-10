@@ -3,12 +3,12 @@ import styled from 'styled-components'
 
 type Props = {
   className?: string
-  title: string
+  name: string
 }
 
-const MenuBase: React.FC<Props> = ({ className, children, title }) => (
+const MenuBase: React.FC<Props> = ({ className, children, name }) => (
   <Wrapper>
-    <MenuTitle>{title}</MenuTitle>
+    <MenuTitle>{name}</MenuTitle>
     <MenuBox className={className}>{children}</MenuBox>
   </Wrapper>
 )

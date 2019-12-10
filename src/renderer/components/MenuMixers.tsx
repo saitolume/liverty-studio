@@ -8,9 +8,9 @@ type Props = {
   microphone: Microphone | null
 }
 
-const MenuMixer: React.FC<Props> = ({ microphone }) => {
+const MenuMixers: React.FC<Props> = ({ microphone }) => {
   return (
-    <Wrapper title="Mixer">
+    <Wrapper name="Mixers">
       <Mixer audio={microphone} />
     </Wrapper>
   )
@@ -22,4 +22,4 @@ const Wrapper = styled(MenuBase)`
   height: calc(100% - 40px);
 `
 
-export default MenuMixer
+export default MenuMixers

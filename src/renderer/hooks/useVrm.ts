@@ -6,13 +6,13 @@ import pose from '../../config/pose.json'
 
 export const useVrm = () => {
   const { camera } = useThree()
-  const { current: loader } = useRef(new GLTFLoader())
+  const loader = useRef(new GLTFLoader())
   const [vrm, setVrm] = useState<VRM | null>(null)
   const [isLoading, setIsLoading] = useState(false)
 
   const loadVrm = (url: string) => {
     setIsLoading(true)
-    loader.load(url, async gltf => {
+    loader.current.load(url, async gltf => {
       const vrm = await VRM.from(gltf)
       vrm.humanoid?.setPose((pose as unknown) as VRMPose)
       if (vrm.lookAt) vrm.lookAt.target = camera

@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 export type Microphone = {
-  deviceName: string
   audioTrack: MediaStreamTrack | null
+  deviceName: string
 }
 
 export const useMicrophone = () => {

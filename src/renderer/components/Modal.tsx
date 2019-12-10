@@ -9,7 +9,7 @@ type Props = {
 const Modal: React.FC<Props> = ({ children, close }) => {
   const ref = useRef<HTMLDivElement>(null)
 
-  const onOutsideClick = useCallback(
+  const closeModal = useCallback(
     (event: MouseEvent) => {
       const isClickTitlebar = event.clientY <= 22
       const isClickInside = ref.current?.contains(event.target as Node)
@@ -20,11 +20,11 @@ const Modal: React.FC<Props> = ({ children, close }) => {
   )
 
   useEffect(() => {
-    document.body.addEventListener('click', onOutsideClick)
+    document.body.addEventListener('click', closeModal)
     return () => {
-      document.body.removeEventListener('click', onOutsideClick)
+      document.body.removeEventListener('click', closeModal)
     }
-  }, [onOutsideClick])
+  }, [closeModal])
 
   return createPortal(
     <Overlay>

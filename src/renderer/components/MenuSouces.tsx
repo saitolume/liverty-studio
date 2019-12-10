@@ -26,7 +26,7 @@ const MenuSources: React.FC<Props> = ({ sources }) => {
 
   return (
     <>
-      <MenuBase title="Sources">
+      <MenuBase name="Sources">
         {sources.map(source => (
           <SourceItem key={source.id}>
             {source.name}
