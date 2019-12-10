@@ -17,25 +17,26 @@ const SourceImage: React.FC<Props> = ({
   draggable = false,
   isSelected = false,
   source,
-  updateSource = () => {}
+  updateSource
 }) => {
   const ref = useRef<Image>(null)
   const [image] = useImage(source.type === 'image' ? `file://${source.filepath}` : '')
 
   const onDragEnd = (event: KonvaEventObject<DragEvent>) => {
     const { x, y } = event.currentTarget.getClientRect()
-    updateSource({ ...source, x, y })
+    updateSource && updateSource({ ...source, x, y })
   }
 
   const onTransformEnd = (event: KonvaEventObject<Event>) => {
     const { x, y, width, height, scaleX, scaleY } = event.currentTarget.attrs
-    updateSource({
-      ...source,
-      x,
-      y,
-      width: width * scaleX,
-      height: height * scaleY
-    })
+    updateSource &&
+      updateSource({
+        ...source,
+        x,
+        y,
+        width: width * scaleX,
+        height: height * scaleY
+      })
   }
 
   return (
