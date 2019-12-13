@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { Layer, Stage } from 'react-konva'
 import { remote } from 'electron'
 import styled, { css } from 'styled-components'
@@ -7,8 +7,10 @@ import Modal from './Modal'
 import Input from './Input'
 import SourceImage from './SourceImage'
 import { createSourceImage, Source } from '../domains/source'
+import { useEventListener } from '../hooks/useEventListener'
 import { useSource } from '../hooks/useSource'
 import { getImageSize } from '../ipc'
+import { keyCodes } from '../../constants/keyCodes'
 
 const previewWidth = 400
 const previewHeight = (400 / 16) * 9
@@ -31,7 +33,9 @@ const SourceAddModal: React.FC<Props> = ({ close, type }) => {
     const {
       canceled,
       filePaths: [filepath]
-    } = await remote.dialog.showOpenDialog(window, {})
+    } = await remote.dialog.showOpenDialog(window, {
+      filters: [{ name: 'All Files', extensions: ['png', 'jpg', 'jpeg', 'gif'] }]
+    })
     if (canceled) return
     const { width, height } = await getImageSize(filepath)
     const sourceImage = createSourceImage({ filepath, width, height })
@@ -42,7 +46,7 @@ const SourceAddModal: React.FC<Props> = ({ close, type }) => {
 
   const addSource = useCallback(
     async (event?: React.KeyboardEvent<HTMLInputElement> | KeyboardEvent) => {
-      if ((event && event.keyCode !== 13) || isDisabled) return
+      if ((event && event.keyCode !== keyCodes.return) || isDisabled) return
       switch (sourcePreview?.type) {
         case 'image':
           addSourceImage({ ...sourcePreview, name })
@@ -60,12 +64,7 @@ const SourceAddModal: React.FC<Props> = ({ close, type }) => {
     }
   }, [type])
 
-  useEffect(() => {
-    document.body.addEventListener('keydown', addSource)
-    return () => {
-      document.body.removeEventListener('keydown', addSource)
-    }
-  }, [addSource])
+  useEventListener('keydown', addSource)
 
   return (
     <Modal close={close}>
