@@ -1,18 +1,17 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 export type Microphone = {
   audioTrack: MediaStreamTrack | null
   deviceName: string
+  isMuted: boolean
+  mute: () => void
+  unmute: () => void
 }
 
-export const useMicrophone = () => {
-  const [audioTrack, setAudioTrack] = useState<MediaStreamTrack | null>(null)
-  const [deviceName, setDeviceName] = useState('')
-
-  const microphone = useMemo<Microphone>(() => ({ audioTrack, deviceName }), [
-    audioTrack,
-    deviceName
-  ])
+export const useMicrophone = (): Microphone => {
+  const audioTrack = useRef<Microphone['audioTrack']>(null)
+  const [deviceName, setDeviceName] = useState<Microphone['deviceName']>('')
+  const [isMuted, setMuted] = useState<Microphone['isMuted']>(false)
 
   const getMicrophone = useCallback(async () => {
     const devices = await navigator.mediaDevices.enumerateDevices()
@@ -22,9 +21,21 @@ export const useMicrophone = () => {
       audio: { deviceId },
       video: false
     })
-    const [audioTrack] = stream.getAudioTracks()
-    setAudioTrack(audioTrack)
+    const [microphone] = stream.getAudioTracks()
+    audioTrack.current = microphone
   }, [])
+
+  const mute = () => {
+    if (!audioTrack.current || isMuted) return
+    audioTrack.current.enabled = false
+    setMuted(true)
+  }
+
+  const unmute = () => {
+    if (!audioTrack.current || !isMuted) return
+    audioTrack.current.enabled = true
+    setMuted(false)
+  }
 
   useEffect(() => {
     ;(async () => {
@@ -32,5 +43,11 @@ export const useMicrophone = () => {
     })()
   }, [getMicrophone])
 
-  return microphone
+  return {
+    audioTrack: audioTrack.current,
+    deviceName,
+    isMuted,
+    mute,
+    unmute
+  }
 }
