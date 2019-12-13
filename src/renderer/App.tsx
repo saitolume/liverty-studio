@@ -91,7 +91,7 @@ const App: React.FC = () => {
   useEffect(() => {
     if (!stageCanvas.current || !microphone.audioTrack) return
     const mediaStream = stageCanvas.current.captureStream(30)
-    mediaStream.addTrack(microphone.audioTrack)
+    if (microphone.audioTrack.enabled) mediaStream.addTrack(microphone.audioTrack)
     setStream(mediaStream)
   }, [microphone.audioTrack, setStream])
 

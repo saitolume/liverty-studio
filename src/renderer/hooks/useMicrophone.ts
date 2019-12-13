@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 export type Microphone = {
   audioTrack: MediaStreamTrack | null
@@ -9,7 +9,7 @@ export type Microphone = {
 }
 
 export const useMicrophone = (): Microphone => {
-  const audioTrack = useRef<Microphone['audioTrack']>(null)
+  const [audioTrack, setAudioTrack] = useState<Microphone['audioTrack']>(null)
   const [deviceName, setDeviceName] = useState<Microphone['deviceName']>('')
   const [isMuted, setMuted] = useState<Microphone['isMuted']>(false)
 
@@ -22,18 +22,18 @@ export const useMicrophone = (): Microphone => {
       video: false
     })
     const [microphone] = stream.getAudioTracks()
-    audioTrack.current = microphone
+    setAudioTrack(microphone)
   }, [])
 
   const mute = () => {
-    if (!audioTrack.current || isMuted) return
-    audioTrack.current.enabled = false
+    if (!audioTrack || isMuted) return
+    setAudioTrack(Object.assign(audioTrack, { enabled: false }))
     setMuted(true)
   }
 
   const unmute = () => {
-    if (!audioTrack.current || !isMuted) return
-    audioTrack.current.enabled = true
+    if (!audioTrack || !isMuted) return
+    setAudioTrack(Object.assign(audioTrack, { enabled: true }))
     setMuted(false)
   }
 
@@ -44,7 +44,7 @@ export const useMicrophone = (): Microphone => {
   }, [getMicrophone])
 
   return {
-    audioTrack: audioTrack.current,
+    audioTrack,
     deviceName,
     isMuted,
     mute,
