@@ -13,12 +13,12 @@ type Props = {
 const Mixer: React.FC<Props> = ({ audio }) => {
   const ratioBarRef = useRef<SVGLineElement>(null)
   const wrapperRef = useRef<HTMLDivElement>(null)
-  const [isMuted, setIsMuted] = useState(false)
   const [isScrolling, setIsScrolling] = useState(false)
-  const [ratio, setRatio] = useState(1.0)
+  const [volumeLevel, setVolumeLevel] = useState(1.0)
 
   const width = wrapperRef.current?.clientWidth || 0
   const ratioBarWidth = width * 0.75
+  const isMuted = !!audio?.isMuted
 
   const scrollRatioBar = useCallback(
     (event: React.MouseEvent<SVGRectElement, MouseEvent>) => {
@@ -26,11 +26,19 @@ const Mixer: React.FC<Props> = ({ audio }) => {
       const { left } = ratioBarRef.current.getBoundingClientRect()
       const position = event.clientX - left - 15
       if (position < 0 || position > ratioBarWidth - 30) return
-      const ratio = Math.floor((position / ratioBarWidth / 0.84) * 100) / 100
-      setRatio(ratio)
+      const volumeLevel = Math.floor((position / ratioBarWidth / 0.84) * 100) / 100
+      setVolumeLevel(volumeLevel)
     },
     [isScrolling, ratioBarWidth]
   )
+
+  const toggleMute = () => {
+    if (isMuted) {
+      audio?.unmute()
+    } else {
+      audio?.mute()
+    }
+  }
 
   const enableScrolling = () => {
     setIsScrolling(true)
@@ -49,7 +57,7 @@ const Mixer: React.FC<Props> = ({ audio }) => {
       <SoundPressureVisualizer viewBox={`0 0 ${width} 5`}>
         <line x1="0" y1="2.5" x2={width} y2="2.5" stroke="#fff" strokeWidth="5" />
       </SoundPressureVisualizer>
-      <RatioBar viewBox={`0 0 ${width} 16`}>
+      <VolumeControlBar viewBox={`0 0 ${width} 16`}>
         <line
           ref={ratioBarRef}
           x1="0"
@@ -62,13 +70,13 @@ const Mixer: React.FC<Props> = ({ audio }) => {
         <line
           x1="0"
           y1="8"
-          x2={ratioBarWidth * ratio * 0.84}
+          x2={ratioBarWidth * volumeLevel * 0.84}
           y2="8"
           stroke="#528eff"
           strokeWidth="5"
         />
         <Handle
-          x={ratioBarWidth * ratio * 0.84}
+          x={ratioBarWidth * volumeLevel * 0.84}
           y="0"
           width="30"
           height="16"
@@ -80,10 +88,10 @@ const Mixer: React.FC<Props> = ({ audio }) => {
           onMouseLeave={disableScrolling}
           onMouseMove={scrollRatioBar}
         />
-      </RatioBar>
-      <VolumeButton onClick={() => setIsMuted(!isMuted)} circle>
+      </VolumeControlBar>
+      <MuteButton onClick={toggleMute} circle>
         <VolumeIcon icon={isMuted ? faVolumeMute : faVolumeUp} />
-      </VolumeButton>
+      </MuteButton>
       <CogButton circle>
         <CogIcon icon={faCog} />
       </CogButton>
@@ -110,7 +118,7 @@ const SoundPressureVisualizer = styled.svg`
   margin-bottom: 8px;
 `
 
-const RatioBar = styled.svg`
+const VolumeControlBar = styled.svg`
   display: inline;
 `
 
@@ -131,7 +139,7 @@ const ControlButton = styled(Button)`
   height: 28px;
 `
 
-const VolumeButton = styled(ControlButton)`
+const MuteButton = styled(ControlButton)`
   bottom: 10px;
   right: 30px;
 `
