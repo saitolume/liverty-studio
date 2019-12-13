@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useCallback, useRef } from 'react'
 import { Image as ImageComponent } from 'react-konva'
 import useImage from 'use-image'
 import { Image } from 'konva/types/shapes/Image'
@@ -9,6 +9,7 @@ import { Source } from '../domains/source'
 type Props = {
   isSelected?: boolean
   draggable?: boolean
+  selectCurrentSource?: (sourceId: Source['id']) => void
   source: Source
   updateSource?: (source: Source) => void
 }
@@ -16,6 +17,7 @@ type Props = {
 const SourceImage: React.FC<Props> = ({
   draggable = false,
   isSelected = false,
+  selectCurrentSource,
   source,
   updateSource
 }) => {
@@ -23,21 +25,27 @@ const SourceImage: React.FC<Props> = ({
   const [image] = useImage(source.type === 'image' ? `file://${source.filepath}` : '')
 
   const onDragEnd = (event: KonvaEventObject<DragEvent>) => {
+    if (!updateSource) return
     const { x, y } = event.currentTarget.getClientRect()
-    updateSource && updateSource({ ...source, x, y })
+    updateSource({ ...source, x, y })
   }
 
   const onTransformEnd = (event: KonvaEventObject<Event>) => {
+    if (!updateSource) return
     const { x, y, width, height, scaleX, scaleY } = event.currentTarget.attrs
-    updateSource &&
-      updateSource({
-        ...source,
-        x,
-        y,
-        width: width * scaleX,
-        height: height * scaleY
-      })
+    updateSource({
+      ...source,
+      x,
+      y,
+      width: width * scaleX,
+      height: height * scaleY
+    })
   }
+
+  const select = useCallback(() => {
+    if (!selectCurrentSource || isSelected) return
+    selectCurrentSource(source.id)
+  }, [isSelected, selectCurrentSource, source.id])
 
   return (
     <SourceBoundingBox sourceRef={ref} isSelected={isSelected}>
@@ -48,6 +56,7 @@ const SourceImage: React.FC<Props> = ({
         y={source.y}
         width={source.width}
         height={source.height}
+        onClick={select}
         onDragEnd={onDragEnd}
         onTransformEnd={onTransformEnd}
         draggable={draggable}
