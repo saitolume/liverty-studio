@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { Layer, Stage } from 'react-konva'
 import { remote } from 'electron'
 import styled, { css } from 'styled-components'
@@ -41,7 +41,7 @@ const SourceAddModal: React.FC<Props> = ({ close, type }) => {
   }
 
   const addSource = useCallback(
-    async (event?: React.KeyboardEvent<HTMLInputElement>) => {
+    async (event?: React.KeyboardEvent<HTMLInputElement> | KeyboardEvent) => {
       if ((event && event.keyCode !== 13) || isDisabled) return
       switch (sourcePreview?.type) {
         case 'image':
@@ -59,6 +59,13 @@ const SourceAddModal: React.FC<Props> = ({ close, type }) => {
         return SourceImage
     }
   }, [type])
+
+  useEffect(() => {
+    document.body.addEventListener('keydown', addSource)
+    return () => {
+      document.body.removeEventListener('keydown', addSource)
+    }
+  }, [addSource])
 
   return (
     <Modal close={close}>
