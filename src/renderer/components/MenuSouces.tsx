@@ -1,19 +1,30 @@
 import React, { useState } from 'react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons'
 import styled from 'styled-components'
+import Button from './Button'
 import MenuBase from './MenuBase'
-import SourceAddModal from './SourceAddModal'
 import Popper from './Popper'
+import SourceAddModal from './SourceAddModal'
 import { Source } from '../domains/source/models'
-import { useSource } from '../hooks/useSource'
+import { useEventListener } from '../hooks/useEventListener'
+import { keyCodes } from '../../constants/keyCodes'
 
 const sourceTypes = ['image'] as const
 
 type Props = {
+  currentSourceId: Source['id']
   sources: Source[]
+  removeSource: (sourceId: Source['id']) => void
+  selectCurrentSource: (sourceId: Source['id']) => void
 }
 
-const MenuSources: React.FC<Props> = ({ sources }) => {
-  const { removeSource } = useSource()
+const MenuSources: React.FC<Props> = ({
+  currentSourceId,
+  sources,
+  removeSource,
+  selectCurrentSource
+}) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isPopperOpen, setIsPopperOpen] = useState(false)
   const [modalType, setModalType] = useState<Source['type'] | null>(null)
@@ -24,17 +35,34 @@ const MenuSources: React.FC<Props> = ({ sources }) => {
     setIsModalOpen(true)
   }
 
+  const remove = (event: React.MouseEvent<HTMLDivElement, MouseEvent> | KeyboardEvent) => {
+    if ('keyCode' in event && event.keyCode !== keyCodes.delete) return
+    if ('nativeEvent' in event) event.nativeEvent.stopImmediatePropagation()
+    removeSource(currentSourceId)
+  }
+
+  const select = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, id: Source['id']) => {
+    event.nativeEvent.stopImmediatePropagation()
+    selectCurrentSource(id)
+  }
+
+  useEventListener('keydown', remove)
+
   return (
     <>
       <MenuBase name="Sources">
-        {sources.map(source => (
-          <SourceItem key={source.id}>
-            {source.name}
-            <button onClick={() => removeSource(source.id)}>-</button>
+        {sources.map(({ id, name }) => (
+          <SourceItem key={id} onClick={event => select(event, id)} active={id === currentSourceId}>
+            {name}
           </SourceItem>
         ))}
         <SourceMenus>
-          <button onClick={() => setIsPopperOpen(true)}>+</button>
+          <ControlButton onClick={() => setIsPopperOpen(true)}>
+            <ButtonIcon icon={faPlus} />
+          </ControlButton>
+          <ControlButton onClick={remove}>
+            <ButtonIcon icon={faMinus} />
+          </ControlButton>
           {isPopperOpen && (
             <Popper close={() => setIsPopperOpen(false)} top={-sourceTypes.length * 32}>
               <SourceTypeList>
@@ -57,20 +85,37 @@ const MenuSources: React.FC<Props> = ({ sources }) => {
 
 const SourceMenus = styled.div`
   background-color: ${({ theme }) => theme.gray};
+  display: flex;
   margin-top: auto;
   padding-top: 4px;
   position: relative;
   width: 100%;
 `
 
-const SourceItem = styled.div`
-  border-bottom: 1px solid ${({ theme }) => theme.grayLight};
+const SourceItem = styled.div<{ active: boolean }>`
+  background-color: ${({ active, theme }) => active && theme.grayLight};
+  border-bottom: 1px solid ${({ theme }) => theme.gray};
   display: flex;
   justify-content: space-between;
-  line-height: 32px;
+  line-height: 40px;
   padding: 0 8px;
   width: calc(100% - 16px);
+  height: 40px;
+`
+
+const ControlButton = styled(Button)`
+  background-color: transparent;
+  box-shadow: none;
+  color: #ffffff;
+  display: flex;
+  font-size: 24px;
+  padding: 0;
+  width: 32px;
   height: 32px;
+`
+
+const ButtonIcon = styled(FontAwesomeIcon)`
+  margin: auto;
 `
 
 const SourceTypeList = styled.div`

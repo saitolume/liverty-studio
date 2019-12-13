@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useCallback, useEffect, useRef } from 'react'
 import { hot } from 'react-hot-loader/root'
 import { Stage, Layer } from 'react-konva'
 import Konva from 'konva'
@@ -24,7 +24,15 @@ interface CanvasElement extends HTMLCanvasElement {
 const App: React.FC = () => {
   const { broadcastTime, setStream } = useBroadcast()
   const microphone = useMicrophone()
-  const { images, sources, updateSource } = useSource()
+  const {
+    images,
+    currentSourceId,
+    sources,
+    selectCurrentSource,
+    deselectCurrentSource,
+    updateSource,
+    removeSource
+  } = useSource()
   const stageRef = useRef<Konva.Stage>(null)
   const vrmRef = useRef<HTMLDivElement>(null)
   const stageCanvas = useRef<CanvasElement | null>()
@@ -51,6 +59,27 @@ const App: React.FC = () => {
         clientHeight
       )
   }
+
+  const deselect = useCallback(
+    (event: MouseEvent) => {
+      const rect = stageRef.current?.content.getBoundingClientRect()
+      if (!rect) return
+      const { x, y, width, height } = rect
+      const { clientX, clientY } = event
+      const isX = clientX < x || width < clientX
+      const isY = clientY < y || height < clientY
+      if (isX || isY) deselectCurrentSource()
+    },
+    [deselectCurrentSource]
+  )
+
+  // Handle clicking outside stage
+  useEffect(() => {
+    document.addEventListener('click', deselect)
+    return () => {
+      document.removeEventListener('click', deselect)
+    }
+  }, [deselect])
 
   // Get canvas refs
   useEffect(() => {
@@ -81,8 +110,9 @@ const App: React.FC = () => {
                   <SourceImage
                     key={image.id}
                     source={image}
+                    selectCurrentSource={selectCurrentSource}
                     updateSource={updateSource}
-                    isSelected
+                    isSelected={image.id === currentSourceId}
                     draggable
                   />
                 ))}
@@ -92,7 +122,12 @@ const App: React.FC = () => {
           <VrmViewer ref={vrmRef} clearVrm={clearVrm} drawVrm={drawVrm} />
         </Main>
         <Menus>
-          <MenuSources sources={sources} />
+          <MenuSources
+            currentSourceId={currentSourceId}
+            sources={sources}
+            removeSource={removeSource}
+            selectCurrentSource={selectCurrentSource}
+          />
           <MenuMixer microphone={microphone} />
           <MenuControls />
         </Menus>
