@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons'
 import styled from 'styled-components'
@@ -7,6 +7,8 @@ import MenuBase from './MenuBase'
 import Popper from './Popper'
 import SourceAddModal from './SourceAddModal'
 import { Source } from '../domains/source/models'
+import { useEventListener } from '../hooks/useEventListener'
+import { keyCodes } from '../../constants/keyCodes'
 
 const sourceTypes = ['image'] as const
 
@@ -33,21 +35,18 @@ const MenuSources: React.FC<Props> = ({
     setIsModalOpen(true)
   }
 
-  const remove = useCallback(
-    (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      event.nativeEvent.stopImmediatePropagation()
-      removeSource(currentSourceId)
-    },
-    [currentSourceId, removeSource]
-  )
+  const remove = (event: React.MouseEvent<HTMLDivElement, MouseEvent> | KeyboardEvent) => {
+    if ('keyCode' in event && event.keyCode !== keyCodes.delete) return
+    if ('nativeEvent' in event) event.nativeEvent.stopImmediatePropagation()
+    removeSource(currentSourceId)
+  }
 
-  const select = useCallback(
-    (event: React.MouseEvent<HTMLDivElement, MouseEvent>, id: Source['id']) => {
-      event.nativeEvent.stopImmediatePropagation()
-      selectCurrentSource(id)
-    },
-    [selectCurrentSource]
-  )
+  const select = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, id: Source['id']) => {
+    event.nativeEvent.stopImmediatePropagation()
+    selectCurrentSource(id)
+  }
+
+  useEventListener('keydown', remove)
 
   return (
     <>
