@@ -1,12 +1,11 @@
 import React, { useCallback, useEffect, useRef } from 'react'
 import { hot } from 'react-hot-loader/root'
-import { Stage, Layer } from 'react-konva'
 import Konva from 'konva'
 import styled from 'styled-components'
 import MenuControls from './components/menu/MenuControls'
 import MenuMixer from './components/menu/MenuMixers'
 import MenuSources from './components/menu/MenuSouces'
-import SourceImage from './components/source/SourceImage'
+import Preview from './components/Preview'
 import StatusBar from './components/StatusBar'
 import TabBar from './components/TabBar'
 import VrmViewer from './components/vrm/VrmViewer'
@@ -17,15 +16,10 @@ import { useSource } from './hooks/useSource'
 const stageWidth = (innerWidth / 3) * 2
 const stageHeight = (((innerWidth / 3) * 2) / 16) * 9
 
-interface CanvasElement extends HTMLCanvasElement {
-  captureStream: (frameRate: number) => MediaStream
-}
-
 const App: React.FC = () => {
   const { broadcastTime, setStream } = useBroadcast()
   const microphone = useMicrophone()
   const {
-    images,
     currentSourceId,
     sources,
     selectCurrentSource,
@@ -35,7 +29,7 @@ const App: React.FC = () => {
   } = useSource()
   const stageRef = useRef<Konva.Stage>(null)
   const vrmRef = useRef<HTMLDivElement>(null)
-  const stageCanvas = useRef<CanvasElement | null>()
+  const stageCanvas = useRef<HTMLCanvasElement | null>()
   const vrmCanvas = useRef<HTMLCanvasElement | null>()
 
   const clearVrm = () => {
@@ -83,7 +77,7 @@ const App: React.FC = () => {
 
   // Get canvas refs
   useEffect(() => {
-    stageCanvas.current = stageRef.current?.content.querySelector<CanvasElement>('canvas')
+    stageCanvas.current = stageRef.current?.content.querySelector('canvas')
     vrmCanvas.current = vrmRef.current?.querySelector('canvas')
   }, [])
 
@@ -100,25 +94,15 @@ const App: React.FC = () => {
       <TabBar />
       <Wrapper>
         <Main>
-          <Preview>
-            <Stage
-              ref={(stageRef as unknown) as React.RefObject<Stage>}
-              width={stageWidth}
-              height={stageHeight}>
-              <Layer>
-                {images.map(image => (
-                  <SourceImage
-                    key={image.id}
-                    source={image}
-                    selectCurrentSource={selectCurrentSource}
-                    updateSource={updateSource}
-                    isSelected={image.id === currentSourceId}
-                    draggable
-                  />
-                ))}
-              </Layer>
-            </Stage>
-          </Preview>
+          <Preview
+            ref={stageRef}
+            width={stageWidth}
+            height={stageHeight}
+            sources={sources}
+            currentSourceId={currentSourceId}
+            selectCurrentSource={selectCurrentSource}
+            updateSource={updateSource}
+          />
           <VrmViewer ref={vrmRef} clearVrm={clearVrm} drawVrm={drawVrm} />
         </Main>
         <Menus>
@@ -150,10 +134,6 @@ const Main = styled.div`
   display: flex;
   margin-bottom: 12px;
   width: 100%;
-`
-
-const Preview = styled.div`
-  background-color: #000;
 `
 
 const Menus = styled.div`
