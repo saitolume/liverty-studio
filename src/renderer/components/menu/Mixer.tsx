@@ -2,9 +2,9 @@ import React, { useCallback, useRef, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCog, faVolumeMute, faVolumeUp } from '@fortawesome/free-solid-svg-icons'
 import styled from 'styled-components'
-import Button from './Button'
-import { Microphone } from '../hooks/useMicrophone'
-import { theme } from '../../constants/theme'
+import Button from '../shared/Button'
+import { Microphone } from '../../hooks/useMicrophone'
+import { theme } from '../../../constants/theme'
 
 type Props = {
   audio: Microphone | null

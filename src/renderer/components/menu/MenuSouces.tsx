@@ -1,14 +1,15 @@
 import React, { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons'
+import { desktopCapturer } from 'electron'
 import styled from 'styled-components'
-import Button from './Button'
+import Button from '../shared/Button'
 import MenuBase from './MenuBase'
-import Popper from './Popper'
-import SourceAddModal from './SourceAddModal'
-import { Source } from '../domains/source/models'
-import { useEventListener } from '../hooks/useEventListener'
-import { keyCodes } from '../../constants/keyCodes'
+import Popper from '../shared/Popper'
+import SourceAddModal from '../source/SourceAddModal'
+import { Source } from '../../domains/source/models'
+import { useEventListener } from '../../hooks/useEventListener'
+import { keyCodes } from '../../../constants/keyCodes'
 
 const sourceTypes = ['image'] as const
 
@@ -46,11 +47,19 @@ const MenuSources: React.FC<Props> = ({
     selectCurrentSource(id)
   }
 
+  const [url, setUrl] = useState('')
+  const getWindowCapture = async () => {
+    const capture = await desktopCapturer.getSources({ types: ['window'] })
+    const imageUrl = capture[0].thumbnail.toDataURL()
+    setUrl(imageUrl)
+  }
+
   useEventListener('keydown', remove)
 
   return (
     <>
       <MenuBase name="Sources">
+        <img src={url} style={{ position: 'absolute', top: 0, left: 0 }} />
         {sources.map(({ id, name }) => (
           <SourceItem key={id} onClick={event => select(event, id)} active={id === currentSourceId}>
             {name}
@@ -63,6 +72,7 @@ const MenuSources: React.FC<Props> = ({
           <ControlButton onClick={remove}>
             <ButtonIcon icon={faMinus} />
           </ControlButton>
+          <button onClick={getWindowCapture}>capture</button>
           {isPopperOpen && (
             <Popper close={() => setIsPopperOpen(false)} top={-sourceTypes.length * 32}>
               <SourceTypeList>

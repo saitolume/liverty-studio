@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import MenuBase from './MenuBase'
 import Mixer from './Mixer'
-import { Microphone } from '../hooks/useMicrophone'
+import { Microphone } from '../../hooks/useMicrophone'
 
 type Props = {
   microphone: Microphone | null

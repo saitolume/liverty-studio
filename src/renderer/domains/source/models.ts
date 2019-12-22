@@ -12,9 +12,4 @@ interface SourceImage extends SourceBase {
   filepath: string
 }
 
-// interface SourceText extends SourceBase {
-//   type: 'text'
-//   content: string
-// }
-
 export type Source = SourceImage

@@ -3,13 +3,13 @@ import { hot } from 'react-hot-loader/root'
 import { Stage, Layer } from 'react-konva'
 import Konva from 'konva'
 import styled from 'styled-components'
-import MenuControls from './components/MenuControls'
-import MenuMixer from './components/MenuMixers'
-import MenuSources from './components/MenuSouces'
-import SourceImage from './components/SourceImage'
+import MenuControls from './components/menu/MenuControls'
+import MenuMixer from './components/menu/MenuMixers'
+import MenuSources from './components/menu/MenuSouces'
+import SourceImage from './components/source/SourceImage'
 import StatusBar from './components/StatusBar'
 import TabBar from './components/TabBar'
-import VrmViewer from './components/VrmViewer'
+import VrmViewer from './components/vrm/VrmViewer'
 import { useBroadcast } from './hooks/useBroadcast'
 import { useMicrophone } from './hooks/useMicrophone'
 import { useSource } from './hooks/useSource'
@@ -140,7 +140,6 @@ const App: React.FC = () => {
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  overflow: hidden;
   padding: 12px 12px 0 12px;
   width: calc(100vw - 24px);
   height: calc(100vh - 36px);

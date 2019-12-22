@@ -3,7 +3,7 @@ import { Text as TextCompopnent } from 'react-konva'
 import { Text } from 'konva/types/shapes/Text'
 import { KonvaEventObject } from 'konva/types/Node'
 import SourceBoundingBox from './SourceBoundingBox'
-import { Source } from '../domains/source'
+import { Source } from '../../domains/source'
 
 type Props = {
   isSelected?: boolean
