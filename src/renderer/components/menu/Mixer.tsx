@@ -21,8 +21,8 @@ const Mixer: React.FC<Props> = ({ audio }) => {
   const isMuted = !!audio?.isMuted
 
   const moveHandle = useCallback(
-    (event: React.MouseEvent<SVGRectElement, MouseEvent>) => {
-      if (!isScrolling) return
+    (event: React.MouseEvent<SVGRectElement | SVGLineElement, MouseEvent>) => {
+      if (event.target instanceof SVGRectElement && !isScrolling) return
       const position = event.clientX - handlePosition - 15
       const volumeLevel = Math.floor((position / volumeControllBarWidth / 0.9) * 100) / 100
       if (volumeLevel < 0 || 1 < volumeLevel) return
@@ -58,7 +58,7 @@ const Mixer: React.FC<Props> = ({ audio }) => {
         <line x1="0" y1="2.5" x2={width} y2="2.5" stroke="#fff" strokeWidth="5" />
       </SoundPressureVisualizer>
       <VolumeControlBar viewBox={`0 0 ${width} 16`}>
-        <line
+        <ClickableLine
           ref={mesureHandlePositionRef}
           x1="0"
           y1="8"
@@ -66,14 +66,16 @@ const Mixer: React.FC<Props> = ({ audio }) => {
           y2="8"
           stroke={theme.gray}
           strokeWidth="5"
+          onClick={moveHandle}
         />
-        <line
+        <ClickableLine
           x1="0"
           y1="8"
           x2={volumeControllBarWidth * volumeLevel * 0.9}
           y2="8"
           stroke="#528eff"
           strokeWidth="5"
+          onClick={moveHandle}
         />
         <Handle
           x={volumeControllBarWidth * volumeLevel * 0.9}
@@ -120,6 +122,10 @@ const SoundPressureVisualizer = styled.svg`
 
 const VolumeControlBar = styled.svg`
   display: inline;
+`
+
+const ClickableLine = styled.line`
+  cursor: pointer;
 `
 
 const Handle = styled.rect`
