@@ -6,8 +6,10 @@ let mainWindow: BrowserWindow | null = null
 
 const createWindow = () => {
   const window = new BrowserWindow({
-    width: 1024,
-    height: 728,
+    width: 1050,
+    height: 750,
+    minWidth: 1050,
+    minHeight: 750,
     backgroundColor: '#222',
     titleBarStyle: 'hidden',
     webPreferences: {

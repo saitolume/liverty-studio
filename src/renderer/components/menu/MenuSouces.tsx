@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons'
-import { desktopCapturer } from 'electron'
+// import { desktopCapturer } from 'electron'
 import styled from 'styled-components'
 import Button from '../shared/Button'
 import MenuBase from './MenuBase'
@@ -47,24 +47,29 @@ const MenuSources: React.FC<Props> = ({
     selectCurrentSource(id)
   }
 
-  const [url, setUrl] = useState('')
-  const getWindowCapture = async () => {
-    const capture = await desktopCapturer.getSources({ types: ['window'] })
-    const imageUrl = capture[0].thumbnail.toDataURL()
-    setUrl(imageUrl)
-  }
+  // const [url, setUrl] = useState('')
+  // const getWindowCapture = async () => {
+  //   const capture = await desktopCapturer.getSources({ types: ['window'] })
+  //   const imageUrl = capture[0].thumbnail.toDataURL()
+  //   setUrl(imageUrl)
+  // }
 
   useEventListener('keydown', remove)
 
   return (
     <>
       <MenuBase name="Sources">
-        <img src={url} style={{ position: 'absolute', top: 0, left: 0 }} />
-        {sources.map(({ id, name }) => (
-          <SourceItem key={id} onClick={event => select(event, id)} active={id === currentSourceId}>
-            {name}
-          </SourceItem>
-        ))}
+        {/* <img src={url} style={{ position: 'absolute', top: 0, left: 0 }} /> */}
+        <SourceList>
+          {sources.map(({ id, name }) => (
+            <SourceItem
+              key={id}
+              onClick={event => select(event, id)}
+              active={id === currentSourceId}>
+              {name}
+            </SourceItem>
+          ))}
+        </SourceList>
         <SourceMenus>
           <ControlButton onClick={() => setIsPopperOpen(true)}>
             <ButtonIcon icon={faPlus} />
@@ -72,7 +77,7 @@ const MenuSources: React.FC<Props> = ({
           <ControlButton onClick={remove}>
             <ButtonIcon icon={faMinus} />
           </ControlButton>
-          <button onClick={getWindowCapture}>capture</button>
+          {/* <button onClick={getWindowCapture}>capture</button> */}
           {isPopperOpen && (
             <Popper close={() => setIsPopperOpen(false)} top={-sourceTypes.length * 32}>
               <SourceTypeList>
@@ -96,10 +101,16 @@ const MenuSources: React.FC<Props> = ({
 const SourceMenus = styled.div`
   background-color: ${({ theme }) => theme.gray};
   display: flex;
-  margin-top: auto;
   padding-top: 4px;
   position: relative;
   width: 100%;
+  height: 32px;
+`
+
+const SourceList = styled.div`
+  overflow: scroll;
+  width: 100%;
+  height: 100%;
 `
 
 const SourceItem = styled.div<{ active: boolean }>`

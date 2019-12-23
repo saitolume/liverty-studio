@@ -60,9 +60,9 @@ const App: React.FC = () => {
       if (!rect) return
       const { x, y, width, height } = rect
       const { clientX, clientY } = event
-      const isX = clientX < x || width < clientX
-      const isY = clientY < y || height < clientY
-      if (isX || isY) deselectCurrentSource()
+      const isXOutside = clientX < x || width < clientX
+      const isYOutside = clientY < y || height < clientY
+      if (isXOutside || isYOutside) deselectCurrentSource()
     },
     [deselectCurrentSource]
   )
@@ -101,8 +101,7 @@ const App: React.FC = () => {
             sources={sources}
             currentSourceId={currentSourceId}
             selectCurrentSource={selectCurrentSource}
-            updateSource={updateSource}
-          />
+            updateSource={updateSource}></Preview>
           <VrmViewer ref={vrmRef} clearVrm={clearVrm} drawVrm={drawVrm} />
         </Main>
         <Menus>
@@ -139,7 +138,9 @@ const Main = styled.div`
 const Menus = styled.div`
   display: flex;
   flex: 1 1;
+  margin-top: auto;
   width: 100%;
+  height: 300px;
 `
 
 export default hot(App)
