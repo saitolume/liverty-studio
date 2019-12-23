@@ -12,8 +12,8 @@ import { useSource } from '../../hooks/useSource'
 import { getImageSize } from '../../ipc'
 import { keyCodes } from '../../../constants/keyCodes'
 
-const previewWidth = 400
-const previewHeight = (400 / 16) * 9
+const previewBoxWidth = 400
+const previewBoxHeight = (400 / 16) * 9
 
 type Props = {
   close: () => void
@@ -74,7 +74,7 @@ const SourceAddModal: React.FC<Props> = ({ close, type }) => {
         </ModalHeader>
         <ModalBody>
           <PreviewBox>
-            <Stage width={previewWidth} height={previewHeight}>
+            <Stage width={previewBoxWidth} height={previewBoxHeight}>
               <Layer>{sourcePreview && <SourcePreview source={sourcePreview} />}</Layer>
             </Stage>
           </PreviewBox>

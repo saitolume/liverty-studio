@@ -3,7 +3,7 @@ import { Image as ImageComponent } from 'react-konva'
 import useImage from 'use-image'
 import { Image } from 'konva/types/shapes/Image'
 import { KonvaEventObject } from 'konva/types/Node'
-import SourceBoundingBox from './SourceBoundingBox'
+import SourceBoundingBoxKonva from './SourceBoundingBoxKonva'
 import { Source } from '../../domains/source'
 
 type Props = {
@@ -48,7 +48,7 @@ const SourceImage: React.FC<Props> = ({
   }, [isSelected, selectCurrentSource, source.id])
 
   return (
-    <SourceBoundingBox sourceRef={ref} isSelected={isSelected}>
+    <SourceBoundingBoxKonva sourceRef={ref} isSelected={isSelected}>
       <ImageComponent
         ref={ref}
         image={image}
@@ -61,7 +61,7 @@ const SourceImage: React.FC<Props> = ({
         onTransformEnd={onTransformEnd}
         draggable={draggable}
       />
-    </SourceBoundingBox>
+    </SourceBoundingBoxKonva>
   )
 }
 
