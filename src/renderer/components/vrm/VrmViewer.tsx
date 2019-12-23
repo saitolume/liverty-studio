@@ -4,9 +4,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye, faEyeSlash, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { remote } from 'electron'
 import styled from 'styled-components'
-import Button from './Button'
+import Button from '../shared/Button'
 import VrmModel from './VrmModel'
-import { useVrm } from '../hooks/useVrm'
+import { useVrm } from '../../hooks/useVrm'
 
 type Props = {
   clearVrm: () => void
@@ -68,7 +68,7 @@ const Wrapper = styled.div`
   flex-direction: column;
   padding: 12px;
   position: relative;
-  width: calc(100vw / 3 - 24px);
+  width: 300px;
   height: calc(100% - 24px);
 `
 

@@ -2,18 +2,18 @@ import React, { useCallback, useMemo, useState } from 'react'
 import { Layer, Stage } from 'react-konva'
 import { remote } from 'electron'
 import styled, { css } from 'styled-components'
-import Button from './Button'
-import Modal from './Modal'
-import Input from './Input'
+import Button from '../shared/Button'
+import Modal from '../shared/Modal'
+import Input from '../shared/Input'
 import SourceImage from './SourceImage'
-import { createSourceImage, Source } from '../domains/source'
-import { useEventListener } from '../hooks/useEventListener'
-import { useSource } from '../hooks/useSource'
-import { getImageSize } from '../ipc'
-import { keyCodes } from '../../constants/keyCodes'
+import { createSourceImage, Source } from '../../domains/source'
+import { useEventListener } from '../../hooks/useEventListener'
+import { useSource } from '../../hooks/useSource'
+import { getImageSize } from '../../ipc'
+import { keyCodes } from '../../../constants/keyCodes'
 
-const previewWidth = 400
-const previewHeight = (400 / 16) * 9
+const previewBoxWidth = 400
+const previewBoxHeight = (400 / 16) * 9
 
 type Props = {
   close: () => void
@@ -74,7 +74,7 @@ const SourceAddModal: React.FC<Props> = ({ close, type }) => {
         </ModalHeader>
         <ModalBody>
           <PreviewBox>
-            <Stage width={previewWidth} height={previewHeight}>
+            <Stage width={previewBoxWidth} height={previewBoxHeight}>
               <Layer>{sourcePreview && <SourcePreview source={sourcePreview} />}</Layer>
             </Stage>
           </PreviewBox>

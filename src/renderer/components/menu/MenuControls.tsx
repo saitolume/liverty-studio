@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import Button from './Button'
-import Input from './Input'
+import Button from '../shared/Button'
+import Input from '../shared/Input'
 import MenuBase from './MenuBase'
-import { useBroadcast } from '../hooks/useBroadcast'
+import { useBroadcast } from '../../hooks/useBroadcast'
 
 const MenuControls: React.FC = () => {
   const [streamKey, setStreamKey] = useState('')

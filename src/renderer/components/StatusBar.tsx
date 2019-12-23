@@ -50,7 +50,6 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: row-reverse;
   line-height: 24px;
-  margin-top: auto;
   padding: 4px 0;
   width: 100%;
   height: 24px;

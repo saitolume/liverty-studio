@@ -7,11 +7,11 @@
     "lib": ["esnext", "dom"],
     "module": "commonjs",
     "moduleResolution": "node",
-    "outDir": "dist",
-    "paths": { "*": ["src/types/*"] },
+    "paths": { "*": ["types/*"] },
     "resolveJsonModule": true,
-    "strict": true
+    "strict": true,
+    "target": "ES2019"
   },
-  "exclude": ["node_modules"],
-  "include": ["src/**/*"]
+  "exclude": ["dist", "node_modules"],
+  "include": ["src/**/*", "types"]
 }

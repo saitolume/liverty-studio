@@ -1,43 +1,47 @@
-import React, { useCallback, useRef, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCog, faVolumeMute, faVolumeUp } from '@fortawesome/free-solid-svg-icons'
 import styled from 'styled-components'
-import Button from './Button'
-import { Microphone } from '../hooks/useMicrophone'
-import { theme } from '../../constants/theme'
+import Button from '../shared/Button'
+import { Microphone } from '../../hooks/useMicrophone'
+import { theme } from '../../../constants/theme'
 
 type Props = {
   audio: Microphone | null
 }
 
 const Mixer: React.FC<Props> = ({ audio }) => {
-  const ratioBarRef = useRef<SVGLineElement>(null)
-  const wrapperRef = useRef<HTMLDivElement>(null)
+  const [handlePosition, setHandlePosition] = useState(0)
   const [isScrolling, setIsScrolling] = useState(false)
   const [volumeLevel, setVolumeLevel] = useState(1.0)
+  const [width, setWidth] = useState(0)
 
-  const width = wrapperRef.current?.clientWidth || 0
-  const ratioBarWidth = width * 0.75
   const isMuted = !!audio?.isMuted
+  const volumeControllBarWidth = width * 0.75
 
-  const scrollRatioBar = useCallback(
-    (event: React.MouseEvent<SVGRectElement, MouseEvent>) => {
-      if (!isScrolling || !ratioBarRef.current) return
-      const { left } = ratioBarRef.current.getBoundingClientRect()
-      const position = event.clientX - left - 15
-      if (position < 0 || position > ratioBarWidth - 30) return
-      const volumeLevel = Math.floor((position / ratioBarWidth / 0.84) * 100) / 100
+  const moveHandle = useCallback(
+    (event: React.MouseEvent<SVGRectElement | SVGLineElement, MouseEvent>) => {
+      if (event.target instanceof SVGRectElement && !isScrolling) return
+      const position = event.clientX - handlePosition - 15
+      const volumeLevel = Math.floor((position / volumeControllBarWidth / 0.9) * 100) / 100
+      if (volumeLevel < 0 || 1 < volumeLevel) return
       setVolumeLevel(volumeLevel)
     },
-    [isScrolling, ratioBarWidth]
+    [isScrolling, handlePosition, volumeControllBarWidth]
   )
 
+  const measureHandlePositionRef = useCallback((node: SVGLineElement) => {
+    const { left } = node.getBoundingClientRect()
+    setHandlePosition(left)
+  }, [])
+
+  const measureWidthRef = useCallback((node: HTMLDivElement) => {
+    const { width } = node.getBoundingClientRect()
+    setWidth(width)
+  }, [])
+
   const toggleMute = () => {
-    if (isMuted) {
-      audio?.unmute()
-    } else {
-      audio?.mute()
-    }
+    isMuted ? audio?.unmute() : audio?.mute()
   }
 
   const enableScrolling = () => {
@@ -49,7 +53,7 @@ const Mixer: React.FC<Props> = ({ audio }) => {
   }
 
   return (
-    <Wrapper ref={wrapperRef}>
+    <Wrapper ref={measureWidthRef}>
       <FlexBox>
         <div>{audio?.deviceName}</div>
         <div>0.0 dB</div>
@@ -58,25 +62,27 @@ const Mixer: React.FC<Props> = ({ audio }) => {
         <line x1="0" y1="2.5" x2={width} y2="2.5" stroke="#fff" strokeWidth="5" />
       </SoundPressureVisualizer>
       <VolumeControlBar viewBox={`0 0 ${width} 16`}>
-        <line
-          ref={ratioBarRef}
+        <ClickableLine
+          ref={measureHandlePositionRef}
           x1="0"
           y1="8"
-          x2={ratioBarWidth}
+          x2={volumeControllBarWidth}
           y2="8"
           stroke={theme.gray}
           strokeWidth="5"
+          onClick={moveHandle}
         />
-        <line
+        <ClickableLine
           x1="0"
           y1="8"
-          x2={ratioBarWidth * volumeLevel * 0.84}
+          x2={volumeControllBarWidth * volumeLevel * 0.9}
           y2="8"
           stroke="#528eff"
           strokeWidth="5"
+          onClick={moveHandle}
         />
         <Handle
-          x={ratioBarWidth * volumeLevel * 0.84}
+          x={volumeControllBarWidth * volumeLevel * 0.9}
           y="0"
           width="30"
           height="16"
@@ -86,7 +92,7 @@ const Mixer: React.FC<Props> = ({ audio }) => {
           onMouseDown={enableScrolling}
           onMouseUp={disableScrolling}
           onMouseLeave={disableScrolling}
-          onMouseMove={scrollRatioBar}
+          onMouseMove={moveHandle}
         />
       </VolumeControlBar>
       <MuteButton onClick={toggleMute} circle>
@@ -120,6 +126,10 @@ const SoundPressureVisualizer = styled.svg`
 
 const VolumeControlBar = styled.svg`
   display: inline;
+`
+
+const ClickableLine = styled.line`
+  cursor: pointer;
 `
 
 const Handle = styled.rect`

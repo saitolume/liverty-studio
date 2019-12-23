@@ -1,15 +1,14 @@
 import React, { useCallback, useEffect, useRef } from 'react'
 import { hot } from 'react-hot-loader/root'
-import { Stage, Layer } from 'react-konva'
 import Konva from 'konva'
 import styled from 'styled-components'
-import MenuControls from './components/MenuControls'
-import MenuMixer from './components/MenuMixers'
-import MenuSources from './components/MenuSouces'
-import SourceImage from './components/SourceImage'
+import MenuControls from './components/menu/MenuControls'
+import MenuMixer from './components/menu/MenuMixers'
+import MenuSources from './components/menu/MenuSouces'
+import Preview from './components/Preview'
 import StatusBar from './components/StatusBar'
 import TabBar from './components/TabBar'
-import VrmViewer from './components/VrmViewer'
+import VrmViewer from './components/vrm/VrmViewer'
 import { useBroadcast } from './hooks/useBroadcast'
 import { useMicrophone } from './hooks/useMicrophone'
 import { useSource } from './hooks/useSource'
@@ -17,15 +16,10 @@ import { useSource } from './hooks/useSource'
 const stageWidth = (innerWidth / 3) * 2
 const stageHeight = (((innerWidth / 3) * 2) / 16) * 9
 
-interface CanvasElement extends HTMLCanvasElement {
-  captureStream: (frameRate: number) => MediaStream
-}
-
 const App: React.FC = () => {
   const { broadcastTime, setStream } = useBroadcast()
   const microphone = useMicrophone()
   const {
-    images,
     currentSourceId,
     sources,
     selectCurrentSource,
@@ -35,7 +29,7 @@ const App: React.FC = () => {
   } = useSource()
   const stageRef = useRef<Konva.Stage>(null)
   const vrmRef = useRef<HTMLDivElement>(null)
-  const stageCanvas = useRef<CanvasElement | null>()
+  const stageCanvas = useRef<HTMLCanvasElement | null>()
   const vrmCanvas = useRef<HTMLCanvasElement | null>()
 
   const clearVrm = () => {
@@ -66,9 +60,9 @@ const App: React.FC = () => {
       if (!rect) return
       const { x, y, width, height } = rect
       const { clientX, clientY } = event
-      const isX = clientX < x || width < clientX
-      const isY = clientY < y || height < clientY
-      if (isX || isY) deselectCurrentSource()
+      const isXOutside = clientX < x || width < clientX
+      const isYOutside = clientY < y || height < clientY
+      if (isXOutside || isYOutside) deselectCurrentSource()
     },
     [deselectCurrentSource]
   )
@@ -83,7 +77,7 @@ const App: React.FC = () => {
 
   // Get canvas refs
   useEffect(() => {
-    stageCanvas.current = stageRef.current?.content.querySelector<CanvasElement>('canvas')
+    stageCanvas.current = stageRef.current?.content.querySelector('canvas')
     vrmCanvas.current = vrmRef.current?.querySelector('canvas')
   }, [])
 
@@ -100,25 +94,14 @@ const App: React.FC = () => {
       <TabBar />
       <Wrapper>
         <Main>
-          <Preview>
-            <Stage
-              ref={(stageRef as unknown) as React.RefObject<Stage>}
-              width={stageWidth}
-              height={stageHeight}>
-              <Layer>
-                {images.map(image => (
-                  <SourceImage
-                    key={image.id}
-                    source={image}
-                    selectCurrentSource={selectCurrentSource}
-                    updateSource={updateSource}
-                    isSelected={image.id === currentSourceId}
-                    draggable
-                  />
-                ))}
-              </Layer>
-            </Stage>
-          </Preview>
+          <Preview
+            ref={stageRef}
+            width={stageWidth}
+            height={stageHeight}
+            sources={sources}
+            currentSourceId={currentSourceId}
+            selectCurrentSource={selectCurrentSource}
+            updateSource={updateSource}></Preview>
           <VrmViewer ref={vrmRef} clearVrm={clearVrm} drawVrm={drawVrm} />
         </Main>
         <Menus>
@@ -140,7 +123,6 @@ const App: React.FC = () => {
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  overflow: hidden;
   padding: 12px 12px 0 12px;
   width: calc(100vw - 24px);
   height: calc(100vh - 36px);
@@ -153,14 +135,12 @@ const Main = styled.div`
   width: 100%;
 `
 
-const Preview = styled.div`
-  background-color: #000;
-`
-
 const Menus = styled.div`
   display: flex;
   flex: 1 1;
+  margin-top: auto;
   width: 100%;
+  height: 300px;
 `
 
 export default hot(App)
