@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCog, faVolumeMute, faVolumeUp } from '@fortawesome/free-solid-svg-icons'
 import styled from 'styled-components'
@@ -11,14 +11,13 @@ type Props = {
 }
 
 const Mixer: React.FC<Props> = ({ audio }) => {
-  const wrapperRef = useRef<HTMLDivElement>(null)
   const [handlePosition, setHandlePosition] = useState(0)
   const [isScrolling, setIsScrolling] = useState(false)
   const [volumeLevel, setVolumeLevel] = useState(1.0)
+  const [width, setWidth] = useState(0)
 
-  const width = wrapperRef.current?.clientWidth || 0
-  const volumeControllBarWidth = width * 0.75
   const isMuted = !!audio?.isMuted
+  const volumeControllBarWidth = width * 0.75
 
   const moveHandle = useCallback(
     (event: React.MouseEvent<SVGRectElement | SVGLineElement, MouseEvent>) => {
@@ -31,9 +30,14 @@ const Mixer: React.FC<Props> = ({ audio }) => {
     [isScrolling, handlePosition, volumeControllBarWidth]
   )
 
-  const mesureHandlePositionRef = useCallback((node: SVGLineElement) => {
+  const measureHandlePositionRef = useCallback((node: SVGLineElement) => {
     const { left } = node.getBoundingClientRect()
     setHandlePosition(left)
+  }, [])
+
+  const measureWidthRef = useCallback((node: HTMLDivElement) => {
+    const { width } = node.getBoundingClientRect()
+    setWidth(width)
   }, [])
 
   const toggleMute = () => {
@@ -49,7 +53,7 @@ const Mixer: React.FC<Props> = ({ audio }) => {
   }
 
   return (
-    <Wrapper ref={wrapperRef}>
+    <Wrapper ref={measureWidthRef}>
       <FlexBox>
         <div>{audio?.deviceName}</div>
         <div>0.0 dB</div>
@@ -59,7 +63,7 @@ const Mixer: React.FC<Props> = ({ audio }) => {
       </SoundPressureVisualizer>
       <VolumeControlBar viewBox={`0 0 ${width} 16`}>
         <ClickableLine
-          ref={mesureHandlePositionRef}
+          ref={measureHandlePositionRef}
           x1="0"
           y1="8"
           x2={volumeControllBarWidth}
