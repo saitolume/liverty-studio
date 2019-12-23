@@ -7,8 +7,9 @@ type Props = {
 }
 
 const SourceDesktopCapture: React.FC<Props> = () => {
-  // Draw to canvas
-  useEffect(() => {}, [])
+  useEffect(() => {
+    // Draw to canvas
+  }, [])
 
   return (
     <Wrapper>
