@@ -1,4 +1,4 @@
-name: Node CI
+name: Actions
 
 on: [push]
 
@@ -6,7 +6,7 @@ jobs:
   build:
     strategy:
       matrix:
-        node-version: [12.13.0]
+        node-version: [12.13.1]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -22,7 +22,7 @@ jobs:
   lint:
     strategy:
       matrix:
-        node-version: [12.13.0]
+        node-version: [12.13.1]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -37,7 +37,7 @@ jobs:
   test:
     strategy:
       matrix:
-        node-version: [12.13.0]
+        node-version: [12.13.1]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
