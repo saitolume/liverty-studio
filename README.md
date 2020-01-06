@@ -1,6 +1,6 @@
 # Liverty Studio
 
-![CI Status](https://github.com/saitoeku3/use-lazyload-ref/workflows/Actions/badge.svg)
+![CI Status](https://github.com/saitoeku3/liverty-studio/workflows/actions/badge.svg)
 
 > Live streaming software for Virtual Liver that only needs VRM
 
