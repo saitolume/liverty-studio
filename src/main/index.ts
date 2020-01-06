@@ -4,8 +4,13 @@ import './ipc'
 
 let mainWindow: BrowserWindow | null = null
 
+const rendererUrl =
+  process.env.NODE_ENV === 'development'
+    ? 'http://127.0.0.1:8080'
+    : `file://${__dirname}/index.html`
+
 const createWindow = () => {
-  const window = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 1050,
     height: 750,
     minWidth: 1050,
@@ -17,12 +22,12 @@ const createWindow = () => {
       webSecurity: false
     }
   })
-  window.loadURL('http://127.0.0.1:8080')
-  return window
+  mainWindow.loadURL(rendererUrl)
 }
 
 app.on('ready', async () => {
-  mainWindow = createWindow()
+  createWindow()
+  if (process.env.NODE_ENV !== 'development') return
   try {
     await inatallExtension()
   } catch (err) {
@@ -31,13 +36,9 @@ app.on('ready', async () => {
 })
 
 app.on('activate', () => {
-  if (mainWindow === null) {
-    mainWindow = createWindow()
-  }
+  if (mainWindow === null) createWindow()
 })
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
+  if (process.platform !== 'darwin') app.quit()
 })

@@ -8,6 +8,7 @@
     "url": "https://github.com/saitoeku3/liverty-stadio.git"
   },
   "license": "MIT",
+  "main": "dist/main.js",
   "scripts": {
     "build": "rimraf ./dist && npm run build:main && npm run build:renderer",
     "build:main": "rimraf ./dist/main.js && webpack --config ./webpack/webpack.config.main.ts",
@@ -17,6 +18,7 @@
     "dev:renderer": "webpack-dev-server --port 8080 --config ./webpack/webpack.config.renderer.ts --hot",
     "format": "eslint \"src/**/*.{ts,tsx}\" --fix",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
+    "pack": "cross-env NODE_ENV=production npm run build && electron-builder -c electron-builder.json",
     "test": "jest --config jest.config.json"
   },
   "dependencies": {
@@ -63,7 +65,9 @@
     "@typescript-eslint/eslint-plugin": "^2.14.0",
     "@typescript-eslint/parser": "^2.14.0",
     "concurrently": "^5.0.2",
+    "cross-env": "^6.0.3",
     "electron": "^7.1.7",
+    "electron-builder": "^21.2.0",
     "electron-load-devtool": "^1.2.0",
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.9.0",

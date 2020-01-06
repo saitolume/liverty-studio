@@ -5,8 +5,6 @@ import merge from 'webpack-merge'
 import baseConfig from './webpack.config.base'
 
 const rendererConfig: webpack.Configuration = {
-  mode: 'development',
-
   devtool: 'inline-source-map',
 
   entry: path.resolve('src', 'renderer', 'index.tsx'),
