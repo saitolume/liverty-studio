@@ -1,0 +1,8 @@
+{
+  "appId": "test",
+  "productName": "Liverty Studio",
+  "mac": {
+    "target": "zip"
+  },
+  "files": ["dist/**/*", "package.json"]
+}
