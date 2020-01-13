@@ -40,7 +40,7 @@
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
     "server-destroy": "^1.0.1",
-    "styled-components": "^4.4.1",
+    "styled-components": "^5.0.0",
     "three": "0.108.0",
     "use-image": "^1.0.5",
     "uuid": "^3.3.3",
