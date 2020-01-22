@@ -1,8 +1,13 @@
 {
-  "appId": "test",
+  "appId": "dev.saitoeku3.liverty-studio",
   "productName": "Liverty Studio",
   "mac": {
+    "hardenedRuntime": true,
+    "gatekeeperAssess": false,
+    "entitlements": "src/build/entitlement.plist",
+    "entitlementsInherit": "src/build/entitlement.plist",
     "target": "dmg"
   },
-  "files": ["dist/**/*", "package.json"]
+  "files": ["dist/**/*", "package.json"],
+  "afterSign": "scripts/notarize.js"
 }
