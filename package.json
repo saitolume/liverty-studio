@@ -68,7 +68,7 @@
     "bplist": "0.0.4",
     "concurrently": "^5.0.2",
     "cross-env": "^6.0.3",
-    "electron": "^7.1.9",
+    "electron": "^7.1.10",
     "electron-builder": "^22.2.0",
     "electron-load-devtool": "^1.2.0",
     "electron-notarize": "^0.2.1",
