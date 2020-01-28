@@ -23,20 +23,26 @@ const createWindow = () => {
     }
   })
   mainWindow.loadURL(rendererUrl)
+
+  mainWindow.on('close', event => {
+    event.preventDefault()
+    mainWindow?.hide()
+  })
 }
 
 app.on('ready', async () => {
   createWindow()
-  if (process.env.NODE_ENV !== 'development') return
-  try {
-    await inatallExtension()
-  } catch (err) {
-    console.error(err)
+  if (process.env.NODE_ENV === 'development') {
+    try {
+      await inatallExtension()
+    } catch (err) {
+      console.error(err)
+    }
   }
 })
 
 app.on('activate', () => {
-  if (mainWindow === null) createWindow()
+  if (process.platform === 'darwin') mainWindow?.show()
 })
 
 app.on('window-all-closed', () => {
