@@ -1,5 +1,5 @@
 import { app, BrowserWindow } from 'electron'
-import { inatallExtension } from './lib/extensions'
+import { inatallExtension } from './lib/installExtensions'
 import './ipc'
 
 let mainWindow: BrowserWindow | null = null
