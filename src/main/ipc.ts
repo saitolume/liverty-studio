@@ -1,7 +1,6 @@
 import { ipcMain } from 'electron'
 import { Server } from 'http'
 import { imageSize } from 'image-size'
-import destroyer from 'server-destroy'
 import { promisify } from 'util'
 import { createFfmpegProcess } from './lib/ffmpeg'
 import { createWebSocketServer } from './lib/webSocket'
@@ -70,5 +69,5 @@ ipcMain.handle(START_SERVER, async () => {
 // Finish streaming
 ipcMain.handle(TERMINATE_SERVER, async () => {
   if (!server) return
-  destroyer(server)
+  server.close()
 })
