@@ -64,7 +64,7 @@
     "@types/webpack": "^4.41.6",
     "@types/webpack-merge": "^4.1.5",
     "@types/ws": "^7.2.1",
-    "@typescript-eslint/eslint-plugin": "^2.19.0",
+    "@typescript-eslint/eslint-plugin": "^2.20.0",
     "@typescript-eslint/parser": "^2.20.0",
     "bplist": "0.0.4",
     "cross-env": "^7.0.0",
