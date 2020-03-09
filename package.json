@@ -67,7 +67,7 @@
     "@typescript-eslint/eslint-plugin": "^2.22.0",
     "@typescript-eslint/parser": "^2.22.0",
     "bplist": "0.0.4",
-    "cross-env": "^7.0.0",
+    "cross-env": "^7.0.2",
     "electron": "^8.0.2",
     "electron-builder": "^22.3.2",
     "electron-load-devtool": "^1.2.0",
