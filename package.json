@@ -29,7 +29,7 @@
     "@fortawesome/free-solid-svg-icons": "^5.11.2",
     "@fortawesome/react-fontawesome": "^0.1.8",
     "@hot-loader/react-dom": "^16.11.0",
-    "@pixiv/three-vrm": "^0.2.0",
+    "@pixiv/three-vrm": "^0.3.3",
     "facefilter": "^1.1.4",
     "image-size": "^0.8.3",
     "konva": "^4.1.6",
@@ -43,7 +43,7 @@
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
     "styled-components": "^5.0.1",
-    "three": "0.108.0",
+    "three": "0.114.0",
     "use-image": "^1.0.5",
     "uuid": "^3.4.0",
     "ws": "^7.2.3"
