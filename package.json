@@ -45,7 +45,7 @@
     "styled-components": "^5.0.1",
     "three": "0.108.0",
     "use-image": "^1.0.5",
-    "uuid": "^3.4.0",
+    "uuid": "^7.0.2",
     "ws": "^7.2.3"
   },
   "devDependencies": {
