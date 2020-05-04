@@ -87,7 +87,7 @@
     "redux-devtools": "^3.5.0",
     "rimraf": "^3.0.2",
     "ts-jest": "^25.4.0",
-    "ts-loader": "^6.2.2",
+    "ts-loader": "^7.0.2",
     "ts-node": "^8.6.2",
     "typescript": "^3.8.3",
     "webpack": "^4.42.1",
