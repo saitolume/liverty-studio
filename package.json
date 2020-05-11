@@ -30,7 +30,7 @@
     "@fortawesome/react-fontawesome": "^0.1.8",
     "@hot-loader/react-dom": "^16.11.0",
     "@pixiv/three-vrm": "^0.2.0",
-    "facefilter": "^1.1.4",
+    "facefilter": "^1.2.7",
     "image-size": "^0.8.3",
     "konva": "^4.1.6",
     "react": "16.10.2",
