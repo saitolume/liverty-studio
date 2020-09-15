@@ -32,7 +32,7 @@
     "@pixiv/three-vrm": "^0.2.0",
     "facefilter": "^1.2.7",
     "image-size": "^0.8.3",
-    "konva": "^4.1.6",
+    "konva": "^4.2.2",
     "react": "16.10.2",
     "react-dom": "16.10.2",
     "react-hot-loader": "^4.12.21",
