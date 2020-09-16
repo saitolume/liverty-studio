@@ -1,4 +1,4 @@
-import uuid from 'uuid/v4'
+import { v4 as uuid } from 'uuid'
 import { Source } from './models'
 
 const getFilename = (filepath: string) => {
@@ -13,7 +13,7 @@ export const createSourceImage = ({
   x = 0,
   y = 0,
   width,
-  height
+  height,
 }: {
   filepath: string
   name?: string
@@ -21,7 +21,7 @@ export const createSourceImage = ({
   y?: number
   width: number
   height: number
-}) => {
+}): Source => {
   const image: Source = {
     id: uuid(),
     type: 'image',
@@ -30,7 +30,7 @@ export const createSourceImage = ({
     width,
     height,
     x,
-    y
+    y,
   }
   return image
 }

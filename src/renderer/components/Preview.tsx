@@ -24,9 +24,9 @@ const Preview = forwardRef<Konva.Stage, Props>(
 
     return (
       <Wrapper>
-        <Stage ref={(ref as unknown) as React.RefObject<Stage>} width={width} height={height}>
+        <Stage ref={(ref as unknown) as React.RefObject<Konva.Stage>} width={width} height={height}>
           <Layer>
-            {sources.map(image => (
+            {sources.map((image) => (
               <SourceImage
                 key={image.id}
                 source={image}

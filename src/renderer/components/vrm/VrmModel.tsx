@@ -17,7 +17,7 @@ const VrmModel: React.FC<Props> = ({ updateVrm, vrm }) => {
       if (!vrm) return
       const head = vrm.humanoid?.getBoneNode(VRMSchema.HumanoidBoneName.Head)
       head?.rotation.set(-state.rx, -state.ry, state.rz, 'ZXY')
-      const [mouth] = state.expressions
+      const mouth = state.expressions[0]
       vrm.blendShapeProxy?.setValue(VRMSchema.BlendShapePresetName.A, mouth)
     },
     [vrm]
@@ -37,13 +37,13 @@ const VrmModel: React.FC<Props> = ({ updateVrm, vrm }) => {
       NNCpath: 'https://unpkg.com/facefilter@1.1.1/dist/NNC.json',
       followZRot: true,
       maxFacedDetected: 1,
-      callbackReady: err => {
+      callbackReady: (err) => {
         if (err) {
           console.error(err)
           return
         }
       },
-      callbackTrack: handleJeelizTrack
+      callbackTrack: handleJeelizTrack,
     })
   }, [handleJeelizTrack, vrm])
 

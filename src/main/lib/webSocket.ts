@@ -1,7 +1,10 @@
-import { createServer } from 'http'
+import { createServer, Server } from 'http'
 import WebSocket from 'ws'
 
-export const createWebSocketServer = async () => {
+export const createWebSocketServer = async (): Promise<{
+  server: Server
+  wss: WebSocket.Server
+}> => {
   const server = createServer()
   const wss = new WebSocket.Server({ server })
 

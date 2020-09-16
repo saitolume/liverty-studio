@@ -1,6 +1,6 @@
-import { spawn } from 'child_process'
+import { ChildProcessWithoutNullStreams, spawn } from 'child_process'
 
-export const createFfmpegProcess = (rtmpUrl: string) => {
+export const createFfmpegProcess = (rtmpUrl: string): ChildProcessWithoutNullStreams => {
   const ffmpeg = spawn('ffmpeg', [
     '-f',
     'lavfi',
@@ -30,7 +30,7 @@ export const createFfmpegProcess = (rtmpUrl: string) => {
     // FLV is the container format used in conjunction with RTMP
     '-f',
     'flv',
-    rtmpUrl
+    rtmpUrl,
   ])
   return ffmpeg
 }

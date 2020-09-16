@@ -6,12 +6,12 @@ import {
   BroadcastState,
   finishStreaming as _finishStreaming,
   setStream as _setStream,
-  startStreaming as _startStreaming
+  startStreaming as _startStreaming,
 } from '../domains/broadcast'
 import { sendStreamKey, startServer, terminateServer } from '../ipc'
 
 const formatTime = (hours: number, minutes: number, seconds: number) =>
-  [hours, minutes, seconds].map(time => ('0' + time).slice(-2)).join(':')
+  [hours, minutes, seconds].map((time) => ('0' + time).slice(-2)).join(':')
 
 export const useBroadcast = () => {
   const dispatch = useDispatch()
@@ -43,16 +43,16 @@ export const useBroadcast = () => {
       await startServer()
       ws.current = new WebSocket('ws://127.0.0.1:3000')
 
-      ws.current.addEventListener('open', event => {
+      ws.current.addEventListener('open', (event) => {
         console.log('WebSocket open', event)
 
         mediaRecoder.current = new MediaRecorder(stream, {
           mimeType: 'video/webm',
           audioBitsPerSecond: 128000,
-          videoBitsPerSecond: 4096000
+          videoBitsPerSecond: 4096000,
         })
 
-        mediaRecoder.current.addEventListener('dataavailable', event => {
+        mediaRecoder.current.addEventListener('dataavailable', (event) => {
           if (!ws.current) return
           ws.current.send((event as BlobEvent).data)
         })
@@ -65,7 +65,7 @@ export const useBroadcast = () => {
         mediaRecoder.current.start(1000)
       })
 
-      ws.current.addEventListener('close', event => {
+      ws.current.addEventListener('close', (event) => {
         console.log('WebSocket close', event)
         if (mediaRecoder.current) {
           mediaRecoder.current.stop()
@@ -93,6 +93,6 @@ export const useBroadcast = () => {
     broadcastTime,
     finishStreaming,
     setStream,
-    startStreaming
+    startStreaming,
   }
 }

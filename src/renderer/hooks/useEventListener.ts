@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 
-export const useEventListener = (type: keyof WindowEventMap, listener: Function) => {
+export const useEventListener = (type: keyof WindowEventMap, listener: (event: Event) => void) => {
   useEffect(() => {
     document.body.addEventListener(type, listener as EventListener)
     return () => {

@@ -7,15 +7,15 @@ const rendererConfig: webpack.Configuration = {
   entry: path.resolve('src', 'main', 'index.ts'),
 
   output: {
-    filename: 'main.js'
+    filename: 'main.js',
   },
 
   target: 'electron-main',
 
   node: {
     __dirname: false,
-    __filename: false
-  }
+    __filename: false,
+  },
 }
 
-export default merge.smart(baseConfig, rendererConfig)
+export default merge(baseConfig, rendererConfig)

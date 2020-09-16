@@ -10,31 +10,31 @@ const rendererConfig: webpack.Configuration = {
   entry: path.resolve('src', 'renderer', 'index.tsx'),
 
   output: {
-    filename: 'renderer.js'
+    filename: 'renderer.js',
   },
 
   module: {
     rules: [
       {
         test: /\.html$/,
-        loader: 'html-loader'
-      }
-    ]
+        loader: 'html-loader',
+      },
+    ],
   },
 
   plugins: [
     new HtmlWebpackPlugin({
-      template: path.resolve('src', 'renderer', 'index.html')
-    })
+      template: path.resolve('src', 'renderer', 'index.html'),
+    }),
   ],
 
   target: 'electron-renderer',
 
   resolve: {
     alias: {
-      'react-dom': '@hot-loader/react-dom'
-    }
-  }
+      'react-dom': '@hot-loader/react-dom',
+    },
+  },
 }
 
-export default merge.smart(baseConfig, rendererConfig)
+export default merge(baseConfig, rendererConfig)

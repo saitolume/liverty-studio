@@ -9,7 +9,7 @@ import {
   GET_IMAGE_SIZE,
   SEND_STREAM_KEY,
   START_SERVER,
-  TERMINATE_SERVER
+  TERMINATE_SERVER,
 } from '../constants/channels'
 
 const sizeOf = promisify(imageSize)
@@ -38,7 +38,7 @@ ipcMain.handle(START_SERVER, async () => {
   server = _server
   server.listen(3000)
 
-  wss.on('connection', ws => {
+  wss.on('connection', (ws) => {
     const rtmpUrl = `${services[0].url}/${stremKey}`
     const ffmpeg = createFfmpegProcess(rtmpUrl)
 
@@ -47,15 +47,15 @@ ipcMain.handle(START_SERVER, async () => {
       ws.terminate()
     })
 
-    ffmpeg.stdin.on('error', event => {
+    ffmpeg.stdin.on('error', (event) => {
       console.log('FFmpeg STDIN Error', event)
     })
 
-    ffmpeg.stderr.on('data', data => {
+    ffmpeg.stderr.on('data', (data) => {
       console.log('FFmpeg STDERR:', data.toString())
     })
 
-    ws.on('message', message => {
+    ws.on('message', (message) => {
       console.log('DATA', message)
       ffmpeg.stdin.write(message)
     })
