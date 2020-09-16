@@ -3,7 +3,7 @@ export {
   removeSource,
   updateSource,
   selectCurrentSource,
-  deselectCurrentSource
+  deselectCurrentSource,
 } from './actions'
 export { createSourceImage } from './factories'
 export { Source } from './models'

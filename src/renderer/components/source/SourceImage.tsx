@@ -19,7 +19,7 @@ const SourceImage: React.FC<Props> = ({
   isSelected = false,
   selectCurrentSource,
   source,
-  updateSource
+  updateSource,
 }) => {
   const ref = useRef<Image>(null)
   const [image] = useImage(source.type === 'image' ? `file://${source.filepath}` : '')
@@ -38,7 +38,7 @@ const SourceImage: React.FC<Props> = ({
       x,
       y,
       width: width * scaleX,
-      height: height * scaleY
+      height: height * scaleY,
     })
   }
 

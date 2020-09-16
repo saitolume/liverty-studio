@@ -3,7 +3,7 @@ import {
   GET_IMAGE_SIZE,
   SEND_STREAM_KEY,
   START_SERVER,
-  TERMINATE_SERVER
+  TERMINATE_SERVER,
 } from '../constants/channels'
 
 type Size = {

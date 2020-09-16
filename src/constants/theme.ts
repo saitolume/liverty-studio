@@ -4,5 +4,5 @@ export const theme = {
   grayLight: '#5a5a5a',
   white: '#fff',
   primary: '#34785c',
-  primaryDark: '#204a38'
+  primaryDark: '#204a38',
 }

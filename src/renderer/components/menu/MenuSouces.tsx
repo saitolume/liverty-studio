@@ -24,7 +24,7 @@ const MenuSources: React.FC<Props> = ({
   currentSourceId,
   sources,
   removeSource,
-  selectCurrentSource
+  selectCurrentSource,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isPopperOpen, setIsPopperOpen] = useState(false)
@@ -64,7 +64,7 @@ const MenuSources: React.FC<Props> = ({
           {sources.map(({ id, name }) => (
             <SourceItem
               key={id}
-              onClick={event => select(event, id)}
+              onClick={(event) => select(event, id)}
               active={id === currentSourceId}>
               {name}
             </SourceItem>
@@ -81,7 +81,7 @@ const MenuSources: React.FC<Props> = ({
           {isPopperOpen && (
             <Popper close={() => setIsPopperOpen(false)} top={-sourceTypes.length * 32}>
               <SourceTypeList>
-                {sourceTypes.map(type => (
+                {sourceTypes.map((type) => (
                   <SourceTypeItem key={type} onClick={() => openModal(type)}>
                     {type}
                   </SourceTypeItem>

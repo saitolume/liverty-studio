@@ -9,7 +9,7 @@ import {
   removeSource as _removeSource,
   updateSource as _updateSouce,
   selectCurrentSource as _selectCurrentSource,
-  deselectCurrentSource as _deselectCurrentSource
+  deselectCurrentSource as _deselectCurrentSource,
 } from '../domains/source'
 
 export const useSource = () => {
@@ -19,13 +19,13 @@ export const useSource = () => {
     ({ source }) => source.currentSourceId
   )
 
-  const images = useMemo(() => sources.filter(source => source.type === 'image'), [sources])
+  const images = useMemo(() => sources.filter((source) => source.type === 'image'), [sources])
 
   const addSourceImage = ({
     filepath,
     name,
     width,
-    height
+    height,
   }: {
     filepath: string
     name?: string
@@ -60,6 +60,6 @@ export const useSource = () => {
     removeSource,
     sources,
     selectCurrentSource,
-    updateSource
+    updateSource,
   }
 }

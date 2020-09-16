@@ -25,7 +25,7 @@ const App: React.FC = () => {
     selectCurrentSource,
     deselectCurrentSource,
     updateSource,
-    removeSource
+    removeSource,
   } = useSource()
   const stageRef = useRef<Konva.Stage>(null)
   const vrmRef = useRef<HTMLDivElement>(null)

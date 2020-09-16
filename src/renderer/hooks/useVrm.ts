@@ -12,7 +12,7 @@ export const useVrm = () => {
 
   const loadVrm = (url: string) => {
     setIsLoading(true)
-    loader.current.load(url, async gltf => {
+    loader.current.load(url, async (gltf) => {
       const vrm = await VRM.from(gltf)
       vrm.humanoid?.setPose((pose as unknown) as VRMPose)
       if (vrm.lookAt) vrm.lookAt.target = camera

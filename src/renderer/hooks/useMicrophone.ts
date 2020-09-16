@@ -15,11 +15,11 @@ export const useMicrophone = (): Microphone => {
 
   const getMicrophone = useCallback(async () => {
     const devices = await navigator.mediaDevices.enumerateDevices()
-    const [{ deviceId, label }] = devices.filter(device => device.kind === 'audioinput')
+    const [{ deviceId, label }] = devices.filter((device) => device.kind === 'audioinput')
     setDeviceName(label)
     const stream = await navigator.mediaDevices.getUserMedia({
       audio: { deviceId },
-      video: false
+      video: false,
     })
     const [microphone] = stream.getAudioTracks()
     setAudioTrack(microphone)
@@ -48,6 +48,6 @@ export const useMicrophone = (): Microphone => {
     deviceName,
     isMuted,
     mute,
-    unmute
+    unmute,
   }
 }

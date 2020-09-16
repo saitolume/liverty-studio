@@ -32,9 +32,9 @@ const SourceAddModal: React.FC<Props> = ({ close, type }) => {
     const window = remote.getCurrentWindow()
     const {
       canceled,
-      filePaths: [filepath]
+      filePaths: [filepath],
     } = await remote.dialog.showOpenDialog(window, {
-      filters: [{ name: 'All Files', extensions: ['png', 'jpg', 'jpeg', 'gif'] }]
+      filters: [{ name: 'All Files', extensions: ['png', 'jpg', 'jpeg', 'gif'] }],
     })
     if (canceled) return
     const { width, height } = await getImageSize(filepath)
@@ -101,7 +101,7 @@ const SourceAddModal: React.FC<Props> = ({ close, type }) => {
               type="text"
               value={name}
               placeholder="Name"
-              onChange={event => setName(event.target.value)}
+              onChange={(event) => setName(event.target.value)}
               onKeyDown={addSource}
             />
           </SourceForm>

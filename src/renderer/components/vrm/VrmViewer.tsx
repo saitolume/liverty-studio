@@ -21,9 +21,9 @@ const VrmViewer = forwardRef<HTMLDivElement, Props>(({ clearVrm, drawVrm }, ref)
     const window = remote.getCurrentWindow()
     const {
       canceled,
-      filePaths: [filePath]
+      filePaths: [filePath],
     } = await remote.dialog.showOpenDialog(window, {
-      filters: [{ name: 'All Files', extensions: ['vrm'] }]
+      filters: [{ name: 'All Files', extensions: ['vrm'] }],
     })
     if (canceled) return
     loadVrm(`file://${filePath}`)

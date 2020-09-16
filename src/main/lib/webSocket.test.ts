@@ -6,7 +6,7 @@ describe('createWebSocketServer', () => {
   let server: Server | null = null
   let wss: WebSocket.Server | null = null
 
-  beforeAll(async done => {
+  beforeAll(async (done) => {
     const { server: _server, wss: _wss } = await createWebSocketServer()
     server = _server
     wss = _wss

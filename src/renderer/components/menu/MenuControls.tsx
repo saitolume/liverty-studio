@@ -27,7 +27,7 @@ const MenuControls: React.FC = () => {
         type="text"
         placeholder="Stream Key"
         value={streamKey}
-        onChange={event => setStreamKey(event.target.value)}
+        onChange={(event) => setStreamKey(event.target.value)}
       />
     </Wrapper>
   )

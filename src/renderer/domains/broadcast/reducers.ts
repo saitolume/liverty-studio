@@ -9,7 +9,7 @@ export type BroadcastState = {
 const initialState: BroadcastState = {
   isStreaming: false,
   stream: null,
-  streamKey: ''
+  streamKey: '',
 }
 
 export const broadcastReducer = (state = initialState, action: BroadcastAction): BroadcastState => {
@@ -17,17 +17,17 @@ export const broadcastReducer = (state = initialState, action: BroadcastAction):
     case 'START_STREAMING':
       return {
         ...state,
-        isStreaming: true
+        isStreaming: true,
       }
     case 'FINISH_STREAMING':
       return {
         ...state,
-        isStreaming: false
+        isStreaming: false,
       }
     case 'SET_STREAM':
       return {
         ...state,
-        stream: action.payload.stream
+        stream: action.payload.stream,
       }
     default:
       return state

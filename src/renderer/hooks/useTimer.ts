@@ -6,7 +6,7 @@ export const useTimer = (isActive: boolean) => {
 
   const setTimer = useCallback(() => {
     intervalId.current = setInterval(() => {
-      setTime(x => x + 1)
+      setTime((x) => x + 1)
     }, 1000)
   }, [])
 

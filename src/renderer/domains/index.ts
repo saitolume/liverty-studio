@@ -9,5 +9,5 @@ export type RootState = {
 
 export const rootReducer = combineReducers<RootState>({
   broadcast: broadcastReducer,
-  source: sourceReducer
+  source: sourceReducer,
 })

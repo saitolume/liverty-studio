@@ -10,31 +10,31 @@ export type SourceAction =
 export const addSource = (source: Source): SourceAction => ({
   type: 'ADD_SOURCE',
   payload: {
-    source
-  }
+    source,
+  },
 })
 
 export const removeSource = (sourceId: Source['id']): SourceAction => ({
   type: 'REMOVE_SOURCE',
   payload: {
-    sourceId
-  }
+    sourceId,
+  },
 })
 
 export const updateSource = (source: Source): SourceAction => ({
   type: 'UPDATE_SOURCE',
   payload: {
-    source
-  }
+    source,
+  },
 })
 
 export const selectCurrentSource = (sourceId: Source['id']): SourceAction => ({
   type: 'SELECT_CURRENT_SOURCE',
   payload: {
-    sourceId
-  }
+    sourceId,
+  },
 })
 
 export const deselectCurrentSource = (): SourceAction => ({
-  type: 'DESELECT_CURRENT_SOURCE'
+  type: 'DESELECT_CURRENT_SOURCE',
 })

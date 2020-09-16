@@ -41,8 +41,10 @@ const Wrapper = styled.div<{ top?: number; right?: number; left?: number; bottom
   position: absolute;
   ${({ top }) => typeof top === 'number' && `top: ${top}px;`}
   ${({ right }) => typeof right === 'number' && `right: ${right}px;`}
-  ${({ left }) => typeof left === 'number' && `left: ${left}px;`}
-  ${({ bottom }) => typeof bottom === 'number' && `bottom: ${bottom}px;`}
+  ${({ left }) =>
+    typeof left === 'number' && `left: ${left}px;`}
+  ${({ bottom }) =>
+    typeof bottom === 'number' && `bottom: ${bottom}px;`}
   z-index: 9999;
 `
 
