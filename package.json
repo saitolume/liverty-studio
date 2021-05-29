@@ -46,7 +46,7 @@
     "three": "^0.118.3",
     "use-image": "^1.0.6",
     "uuid": "^8.3.0",
-    "ws": "^7.3.1"
+    "ws": "^7.4.6"
   },
   "devDependencies": {
     "@types/dom-mediacapture-record": "^1.0.7",
