@@ -43,7 +43,7 @@
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
     "styled-components": "^5.2.0",
-    "three": "^0.118.3",
+    "three": "^0.137.0",
     "use-image": "^1.0.6",
     "uuid": "^8.3.0",
     "ws": "^7.3.1"
